@@ -1,344 +1,915 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make Future | Admin</title>
-  <style>
-    :root{color-scheme:dark}
-    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;padding:20px}
-    .card{max-width:1200px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
-    a,button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
-    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .tabBtn.active{background:rgba(255,255,255,.14)}
-    .tab{display:none;margin-top:14px}
-    .tab.active{display:block}
-    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-top:12px}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:980px){.grid{grid-template-columns:1fr}}
-    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border-bottom:1px solid rgba(255,255,255,.12);padding:10px;font-size:13px;vertical-align:top}
-    th{text-align:right;opacity:.85}
-    .muted{opacity:.82;font-size:13px;line-height:1.6}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Make Future | Admin</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg1:#0f172a;
+  --bg2:#111827;
+  --card:#1e293b;
+  --accent:#7c3aed;
+  --accent2:#06b6d4;
+  --text:#f1f5f9;
+  --muted:rgba(241,245,249,.75);
+  --line:rgba(255,255,255,.08);
+  --danger:#ef4444;
+  --ok:#22c55e;
+  --warn:#f59e0b;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Cairo',sans-serif;
+  background:radial-gradient(1000px 500px at 10% 10%, rgba(124,58,237,.25), transparent 60%),
+             radial-gradient(900px 600px at 90% 20%, rgba(6,182,212,.22), transparent 60%),
+             linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* Navbar */
+.nav{
+  position:sticky; top:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px;
+  background:rgba(0,0,0,.35);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px);
+  z-index:10;
+}
+
+.brand{display:flex; gap:10px; align-items:center}
+.badge{
+  width:42px;height:42px;border-radius:14px;
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;font-weight:900;
+}
+.title{font-weight:900; font-size:18px; line-height:1.1}
+.subtitle{font-size:12px; color:var(--muted)}
+
+.navActions{display:flex; gap:10px; flex-wrap:wrap}
+.btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  padding:9px 14px;
+  border-radius:14px;
+  font-weight:800;
+  text-decoration:none;
+  display:inline-flex; align-items:center; gap:8px;
+  transition:.25s;
+  cursor:pointer;
+}
+.btn:hover{transform:translateY(-1px); background:rgba(255,255,255,.1)}
+.btn.primary{background:linear-gradient(45deg,var(--accent),var(--accent2)); border:none}
+.btn.danger{background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.35)}
+.btn.ghost{background:transparent}
+.pill{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  padding:6px 10px;border-radius:999px;
+  font-size:12px;color:var(--muted);
+}
+
+/* Layout */
+.wrap{max-width:1200px;margin:0 auto;padding:18px}
+.grid{
+  display:grid; gap:12px;
+  grid-template-columns:repeat(12,1fr);
+}
+.card{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 18px 60px rgba(0,0,0,.25);
+}
+.card h3{margin:0 0 8px;font-size:16px}
+.muted{color:var(--muted);font-size:13px;line-height:1.7}
+.hr{height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.14),transparent);margin:12px 0}
+
+/* Tabs */
+.tabs{display:flex; gap:10px; flex-wrap:wrap}
+.tabBtn.active{background:rgba(255,255,255,.14); transform:translateY(-1px)}
+.tab{display:none}
+.tab.active{display:block}
+
+/* Forms */
+input,select,textarea{
+  width:100%;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(15,23,42,.55);
+  color:var(--text);
+  outline:none;
+}
+textarea{min-height:90px; resize:vertical}
+.two{
+  display:grid; gap:10px;
+  grid-template-columns:1fr 1fr;
+}
+.three{
+  display:grid; gap:10px;
+  grid-template-columns:1fr 1fr 1fr;
+}
+@media (max-width:900px){
+  .two,.three{grid-template-columns:1fr}
+}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border-bottom:1px solid rgba(255,255,255,.10);padding:10px;font-size:13px;vertical-align:top}
+th{text-align:right;opacity:.85}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.small{font-size:12px;color:var(--muted)}
+.kpi{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+}
+@media (max-width:900px){.kpi{grid-template-columns:repeat(2,1fr)}}
+.kpiBox{
+  background:rgba(0,0,0,.22);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+}
+.kpiBox b{display:block;font-size:18px}
+.tag{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.05);
+  color:var(--muted);
+  font-size:12px;
+}
+.tag.ok{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.12); color:#bbf7d0}
+.tag.warn{border-color:rgba(245,158,11,.35); background:rgba(245,158,11,.12); color:#fde68a}
+.tag.bad{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.12); color:#fecaca}
+
+/* Toast */
+#toast{
+  position:fixed;
+  left:16px; bottom:16px;
+  background:rgba(0,0,0,.55);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:10px 12px;
+  color:var(--text);
+  font-size:13px;
+  display:none;
+  max-width:min(420px,calc(100vw - 32px));
+}
+</style>
 </head>
+
 <body>
+
+<div class="nav">
+  <div class="brand">
+    <div class="badge">MF</div>
+    <div>
+      <div class="title">لوحة الأدمن</div>
+      <div class="subtitle">إدارة كورسات • مواعيد • دفع • فيديوهات</div>
+    </div>
+  </div>
+
+  <div class="navActions">
+    <span class="pill" id="mePill">Loading…</span>
+    <a class="btn" href="index.html">🏠 الرئيسية</a>
+    <button class="btn danger" id="logoutBtn">خروج</button>
+  </div>
+</div>
+
+<div class="wrap">
+
   <div class="card">
     <div class="row">
+      <div>
+        <h3 style="margin:0">Dashboard</h3>
+        <div class="muted">نظرة سريعة على النظام</div>
+      </div>
       <div class="row" style="justify-content:flex-start">
-        <div class="logo">MF</div>
-        <div>
-          <div style="font-size:18px;font-weight:900">لوحة الأدمن</div>
-          <div class="muted">Superadmin فقط</div>
-        </div>
-      </div>
-      <div class="row">
-        <a href="index.html">الرئيسية</a>
-        <button onclick="logout()">خروج</button>
+        <button class="btn" id="refreshAllBtn">🔄 Refresh</button>
+        <span class="tag" id="envTag">Supabase</span>
       </div>
     </div>
 
+    <div class="kpi" style="margin-top:12px">
+      <div class="kpiBox"><b id="kUsers">—</b><span class="small">طلاب (Users)</span></div>
+      <div class="kpiBox"><b id="kCourses">—</b><span class="small">كورسات</span></div>
+      <div class="kpiBox"><b id="kPending">—</b><span class="small">طلبات Pending</span></div>
+      <div class="kpiBox"><b id="kVideos">—</b><span class="small">فيديوهات فعّالة</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
     <div class="tabs">
-      <button class="tabBtn active" onclick="openTab('courses',this)">Courses</button>
-      <button class="tabBtn" onclick="openTab('schedules',this)">Schedules</button>
-      <button class="tabBtn" onclick="openTab('payments',this)">Payments</button>
+      <button class="btn tabBtn active" data-tab="tabCourses">📚 Courses</button>
+      <button class="btn tabBtn" data-tab="tabSchedules">🗓 Schedules</button>
+      <button class="btn tabBtn" data-tab="tabPayments">💳 Payments</button>
+      <button class="btn tabBtn" data-tab="tabVideos">🎥 Videos</button>
     </div>
 
-    <!-- Courses -->
-    <div id="courses" class="tab active">
-      <div class="box">
-        <div class="grid">
-          <div>
-            <div class="muted">Grade</div>
-            <select id="grade">
-              <option value="3prep">3prep</option>
-              <option value="1sec">1sec</option>
-              <option value="2sec">2sec</option>
-              <option value="3sec">3sec</option>
-            </select>
-          </div>
-          <div>
-            <div class="muted">Subject</div>
-            <select id="subject">
-              <option value="Math">Math</option>
-              <option value="English">English</option>
-            </select>
-          </div>
-        </div>
+    <div class="hr"></div>
 
-        <div class="grid" style="margin-top:10px">
-          <div>
-            <div class="muted">Title</div>
-            <input id="cTitle" placeholder="Course title" />
-          </div>
-          <div>
-            <div class="muted">Teacher</div>
-            <input id="cTeacher" placeholder="Teacher name" />
-          </div>
+    <!-- COURSES -->
+    <div class="tab active" id="tabCourses">
+      <div class="row">
+        <div>
+          <h3>إدارة الكورسات</h3>
+          <div class="muted">إضافة / تفعيل / إيقاف كورسات</div>
         </div>
-
-        <div class="grid" style="margin-top:10px">
-          <div>
-            <div class="muted">Price</div>
-            <input id="cPrice" type="number" placeholder="200" />
-          </div>
-          <div class="row" style="justify-content:flex-start;align-items:end">
-            <button onclick="createCourse()">Add Course</button>
-            <button onclick="loadCourses()" style="opacity:.85">Refresh</button>
-          </div>
+        <div class="row" style="justify-content:flex-start">
+          <button class="btn" id="coursesRefreshBtn">🔄 Refresh</button>
         </div>
+      </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th><th>Teacher</th><th>Price</th><th>Active</th><th>Pick</th>
-            </tr>
-          </thead>
-          <tbody id="coursesBody"></tbody>
-        </table>
+      <div class="two" style="margin-top:10px">
+        <div>
+          <div class="small">Grade</div>
+          <select id="cGrade">
+            <option value="3prep">3prep</option>
+            <option value="1sec">1sec</option>
+            <option value="2sec">2sec</option>
+            <option value="3sec">3sec</option>
+          </select>
+        </div>
+        <div>
+          <div class="small">Subject</div>
+          <select id="cSubject">
+            <option value="Math">Math</option>
+            <option value="English">English</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <div class="small">Title</div>
+          <input id="cTitle" placeholder="اسم الكورس" />
+        </div>
+        <div>
+          <div class="small">Teacher</div>
+          <input id="cTeacher" placeholder="اسم المدرس" />
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <div class="small">Price</div>
+          <input id="cPrice" type="number" placeholder="200" />
+        </div>
+        <div class="row" style="justify-content:flex-start; align-items:flex-end">
+          <button class="btn primary" id="cAddBtn">➕ Add Course</button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>الكورس</th>
+            <th>المدرس</th>
+            <th>Grade/Subject</th>
+            <th>السعر</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="coursesBody"></tbody>
+      </table>
+
+      <div class="muted" style="margin-top:10px">
+        💡 Tip: اضغط <b>Pick</b> علشان تستخدم الكورس ده في المواعيد والفيديوهات.
       </div>
     </div>
 
-    <!-- Schedules -->
-    <div id="schedules" class="tab">
-      <div class="box">
-        <div class="muted">Course selected:</div>
-        <div id="picked" style="font-weight:900;margin-top:6px">—</div>
+    <!-- SCHEDULES -->
+    <div class="tab" id="tabSchedules">
+      <div class="row">
+        <div>
+          <h3>المواعيد</h3>
+          <div class="muted">اختار كورس وبعدين أضف مواعيد</div>
+        </div>
+        <div class="row" style="justify-content:flex-start">
+          <span class="tag" id="pickedCourseTag">لم يتم اختيار كورس</span>
+          <button class="btn" id="schRefreshBtn">🔄 Refresh</button>
+        </div>
+      </div>
 
-        <div class="grid" style="margin-top:12px">
+      <div class="three" style="margin-top:10px">
+        <div>
+          <div class="small">اليوم</div>
+          <input id="sDay" placeholder="السبت" />
+        </div>
+        <div>
+          <div class="small">من</div>
+          <input id="sStart" placeholder="5:00 PM" />
+        </div>
+        <div>
+          <div class="small">إلى</div>
+          <input id="sEnd" placeholder="6:30 PM" />
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="small">ملاحظات (اختياري)</div>
+        <input id="sNotes" placeholder="دفعة 2026 / أونلاين / …" />
+      </div>
+
+      <div class="row" style="margin-top:12px;justify-content:flex-start">
+        <button class="btn primary" id="sAddBtn">➕ Add Schedule</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>اليوم</th><th>من</th><th>إلى</th><th>ملاحظات</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="schBody"></tbody>
+      </table>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="tab" id="tabPayments">
+      <div class="row">
+        <div>
+          <h3>طلبات الدفع</h3>
+          <div class="muted">Approve / Reject</div>
+        </div>
+        <div class="row" style="justify-content:flex-start">
+          <button class="btn" data-payfilter="pending">Pending</button>
+          <button class="btn" data-payfilter="approved">Approved</button>
+          <button class="btn" data-payfilter="rejected">Rejected</button>
+          <button class="btn" id="payRefreshBtn">🔄 Refresh</button>
+          <span class="tag warn" id="payFilterTag">pending</span>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Info</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="payBody"></tbody>
+      </table>
+    </div>
+
+    <!-- VIDEOS -->
+    <div class="tab" id="tabVideos">
+      <div class="row">
+        <div>
+          <h3>فيديوهات الكورسات</h3>
+          <div class="muted">إضافة لينكات يوتيوب + ترتيب + تفعيل/إيقاف</div>
+        </div>
+        <div class="row" style="justify-content:flex-start">
+          <span class="tag" id="pickedVideoCourseTag">لم يتم اختيار كورس</span>
+          <button class="btn" id="vidRefreshBtn">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px; background:rgba(0,0,0,.18)">
+        <div class="two">
           <div>
-            <div class="muted">Day</div>
-            <input id="sDay" placeholder="السبت" />
+            <div class="small">Title</div>
+            <input id="vTitle" placeholder="اسم الفيديو" />
           </div>
           <div>
-            <div class="muted">Notes</div>
-            <input id="sNotes" placeholder="اختياري" />
+            <div class="small">YouTube URL</div>
+            <input id="vUrl" placeholder="https://www.youtube.com/watch?v=..." />
           </div>
         </div>
 
-        <div class="grid" style="margin-top:10px">
+        <div class="three" style="margin-top:10px">
           <div>
-            <div class="muted">Start</div>
-            <input id="sStart" placeholder="5:00 PM" />
+            <div class="small">Grade (auto from picked course)</div>
+            <input id="vGrade" disabled />
           </div>
           <div>
-            <div class="muted">End</div>
-            <input id="sEnd" placeholder="6:30 PM" />
+            <div class="small">Subject (auto from picked course)</div>
+            <input id="vSubject" disabled />
+          </div>
+          <div>
+            <div class="small">Order</div>
+            <input id="vOrder" type="number" placeholder="1" />
           </div>
         </div>
 
         <div class="row" style="margin-top:12px;justify-content:flex-start">
-          <button onclick="addSchedule()">Add Schedule</button>
-          <button onclick="loadSchedules()" style="opacity:.85">Refresh</button>
+          <button class="btn primary" id="vAddBtn">➕ Add Video</button>
+          <span class="muted">لازم تختار كورس الأول (Pick من Courses)</span>
         </div>
+      </div>
 
-        <table>
-          <thead>
-            <tr><th>Day</th><th>Start</th><th>End</th><th>Notes</th><th>Action</th></tr>
-          </thead>
-          <tbody id="schBody"></tbody>
-        </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Title</th>
+            <th>Grade/Subject</th>
+            <th>URL</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="vidBody"></tbody>
+      </table>
+
+      <div class="muted" style="margin-top:10px">
+        💡 ترتيب الفيديوهات بيكون حسب <b>order_index</b> (الأقل يظهر الأول).
       </div>
     </div>
 
-    <!-- Payments -->
-    <div id="payments" class="tab">
-      <div class="box">
-        <div class="row" style="justify-content:flex-start">
-          <button onclick="loadPayments('pending')">Pending</button>
-          <button onclick="loadPayments('approved')">Approved</button>
-          <button onclick="loadPayments('rejected')">Rejected</button>
-        </div>
-
-        <table>
-          <thead>
-            <tr><th>Student</th><th>Course</th><th>Info</th><th>Action</th></tr>
-          </thead>
-          <tbody id="payBody"></tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
+</div>
+
+<div id="toast"></div>
+
 <script type="module">
-  import { supabase } from "./supabase-client.js";
+import { supabase } from "./supabase-client.js";
 
-  const me = JSON.parse(localStorage.getItem("mf_user") || "null");
-  if(!me) location.href="login.html";
-  if(me.role !== "superadmin") { alert("Superadmin only"); location.href="student.html"; }
+const toastEl = document.getElementById("toast");
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.style.display = "block";
+  clearTimeout(window.__t);
+  window.__t = setTimeout(()=>toastEl.style.display="none", 2200);
+}
 
-  window.logout = function(){
-    localStorage.removeItem("mf_user");
-    location.href="login.html";
-  }
+const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+if(!me) location.href="login.html";
 
-  window.openTab = function(id, btn){
-    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+document.getElementById("mePill").textContent = `${me.full_name} • ${me.role}`;
+
+if(me.role !== "superadmin"){
+  alert("Superadmin only");
+  location.href="student.html";
+}
+
+document.getElementById("logoutBtn").onclick = ()=>{
+  localStorage.removeItem("mf_user");
+  location.href="login.html";
+};
+
+function esc(s){ return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+// Tabs
+document.querySelectorAll(".tabBtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
     document.querySelectorAll(".tabBtn").forEach(x=>x.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
     btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  });
+});
+
+// State
+let pickedCourse = null;
+let payFilter = "pending";
+
+// Elements
+const coursesBody = document.getElementById("coursesBody");
+const schBody = document.getElementById("schBody");
+const payBody = document.getElementById("payBody");
+const vidBody = document.getElementById("vidBody");
+
+const pickedCourseTag = document.getElementById("pickedCourseTag");
+const pickedVideoCourseTag = document.getElementById("pickedVideoCourseTag");
+
+const vGrade = document.getElementById("vGrade");
+const vSubject = document.getElementById("vSubject");
+
+// KPI
+const kUsers = document.getElementById("kUsers");
+const kCourses = document.getElementById("kCourses");
+const kPending = document.getElementById("kPending");
+const kVideos = document.getElementById("kVideos");
+
+async function refreshKPIs(){
+  const [u] = await supabase.from("users").select("id", { count:"exact", head:true });
+  const [c] = await supabase.from("courses").select("id", { count:"exact", head:true });
+  const [p] = await supabase.from("payments").select("id", { count:"exact", head:true }).eq("status","pending");
+  const [v] = await supabase.from("video_library").select("id", { count:"exact", head:true }).eq("is_active",true);
+
+  // supabase-js returns count on the response object
+  // In CDN builds, head:true with count works; we read from returned object properties:
+}
+
+async function countTable(table, filterFn=null){
+  let q = supabase.from(table).select("*", { count:"exact", head:true });
+  if(filterFn) q = filterFn(q);
+  const res = await q;
+  // res = { data:null, error:null, count:number }
+  return res.count ?? 0;
+}
+
+async function loadDashboard(){
+  kUsers.textContent = await countTable("users");
+  kCourses.textContent = await countTable("courses");
+  kPending.textContent = await countTable("payments", q=>q.eq("status","pending"));
+  kVideos.textContent = await countTable("video_library", q=>q.eq("is_active",true));
+}
+
+// COURSES
+async function loadCourses(){
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .order("id", { ascending:false });
+
+  if(error){ alert(error.message); return; }
+
+  coursesBody.innerHTML = "";
+  if(!data || data.length===0){
+    coursesBody.innerHTML = `<tr><td colspan="6">مفيش كورسات</td></tr>`;
+    return;
   }
 
-  const coursesBody = document.getElementById("coursesBody");
-  const schBody = document.getElementById("schBody");
-  const payBody = document.getElementById("payBody");
-  const picked = document.getElementById("picked");
+  data.forEach(c=>{
+    const activeTag = c.is_active ? `<span class="tag ok">Active</span>` : `<span class="tag bad">Off</span>`;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${esc(c.title)}</b><div class="small">${esc(c.grade)} • ${esc(c.subject)}</div></td>
+      <td>${esc(c.teacher_name)}</td>
+      <td>${esc(c.grade)} / ${esc(c.subject)}</td>
+      <td>${esc(c.price)}</td>
+      <td>${activeTag}</td>
+      <td class="row" style="justify-content:flex-start">
+        <button class="btn" data-pick="${c.id}">Pick</button>
+        <button class="btn" data-toggle="${c.id}">${c.is_active ? "Disable" : "Enable"}</button>
+        <button class="btn danger" data-del="${c.id}">Delete</button>
+      </td>
+    `;
+    coursesBody.appendChild(tr);
+  });
 
-  let selectedCourse = null;
+  // actions
+  coursesBody.querySelectorAll("[data-pick]").forEach(b=>{
+    b.onclick = ()=>{
+      const id = Number(b.dataset.pick);
+      pickedCourse = data.find(x=>x.id===id);
+      pickedCourseTag.textContent = `✅ كورس مختار: ${pickedCourse.title} (ID: ${pickedCourse.id})`;
+      pickedCourseTag.className = "tag ok";
+      pickedVideoCourseTag.textContent = `✅ فيديوهات: ${pickedCourse.title}`;
+      pickedVideoCourseTag.className = "tag ok";
+      vGrade.value = pickedCourse.grade;
+      vSubject.value = pickedCourse.subject;
+      toast("تم اختيار الكورس ✅");
+      loadSchedules();
+      loadVideos();
+    };
+  });
 
-  window.createCourse = async function(){
-    const grade = document.getElementById("grade").value;
-    const subject = document.getElementById("subject").value;
-    const title = document.getElementById("cTitle").value.trim();
-    const teacher_name = document.getElementById("cTeacher").value.trim();
-    const price = Number(document.getElementById("cPrice").value || 0);
+  coursesBody.querySelectorAll("[data-toggle]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.toggle);
+      const course = data.find(x=>x.id===id);
+      const { error } = await supabase.from("courses")
+        .update({ is_active: !course.is_active })
+        .eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم التحديث ✅");
+      loadCourses();
+      loadDashboard();
+    };
+  });
 
-    if(!title || !teacher_name){ alert("اكتب title و teacher"); return; }
+  coursesBody.querySelectorAll("[data-del]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.del);
+      if(!confirm("متأكد حذف الكورس؟")) return;
+      const { error } = await supabase.from("courses").delete().eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم الحذف ✅");
+      if(pickedCourse?.id===id){
+        pickedCourse=null;
+        pickedCourseTag.textContent="لم يتم اختيار كورس";
+        pickedCourseTag.className="tag";
+        pickedVideoCourseTag.textContent="لم يتم اختيار كورس";
+        pickedVideoCourseTag.className="tag";
+        vGrade.value=""; vSubject.value="";
+        schBody.innerHTML = "";
+        vidBody.innerHTML = "";
+      }
+      loadCourses();
+      loadDashboard();
+    };
+  });
+}
 
-    const { error } = await supabase
-      .from("courses")
-      .insert([{ grade, subject, title, teacher_name, price, is_active:true }]);
+document.getElementById("cAddBtn").onclick = async ()=>{
+  const grade = document.getElementById("cGrade").value;
+  const subject = document.getElementById("cSubject").value;
+  const title = document.getElementById("cTitle").value.trim();
+  const teacher_name = document.getElementById("cTeacher").value.trim();
+  const price = Number(document.getElementById("cPrice").value || 0);
 
-    if(error){ alert(error.message); return; }
-    alert("Added ✅");
-    document.getElementById("cTitle").value="";
-    document.getElementById("cTeacher").value="";
-    document.getElementById("cPrice").value="";
-    loadCourses();
-  }
+  if(!title || !teacher_name){ alert("اكتب اسم الكورس + المدرس"); return; }
 
-  window.loadCourses = async function(){
-    const { data, error } = await supabase
-      .from("courses")
-      .select("*")
-      .order("id", {ascending:false});
+  const { error } = await supabase.from("courses").insert([{ grade, subject, title, teacher_name, price, is_active:true }]);
+  if(error){ alert(error.message); return; }
 
-    if(error){ alert(error.message); return; }
-
-    coursesBody.innerHTML = "";
-    data.forEach(c=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><b>${esc(c.title)}</b><br><span class="muted">${esc(c.grade)} — ${esc(c.subject)}</span></td>
-        <td>${esc(c.teacher_name)}</td>
-        <td>${esc(c.price)}</td>
-        <td>${c.is_active ? "✅" : "❌"}</td>
-        <td><button onclick='pickCourse(${JSON.stringify(c)})'>Pick</button></td>
-      `;
-      coursesBody.appendChild(tr);
-    });
-  }
-
-  window.pickCourse = async function(course){
-    selectedCourse = course;
-    picked.textContent = `${course.title} (ID: ${course.id})`;
-    openTab("schedules", document.querySelectorAll(".tabBtn")[1]);
-    loadSchedules();
-  }
-
-  window.addSchedule = async function(){
-    if(!selectedCourse){ alert("Pick course أولاً"); return; }
-
-    const day_of_week = document.getElementById("sDay").value.trim();
-    const start_time = document.getElementById("sStart").value.trim();
-    const end_time = document.getElementById("sEnd").value.trim();
-    const notes = document.getElementById("sNotes").value.trim() || null;
-
-    if(!day_of_week || !start_time || !end_time){ alert("اكتب اليوم + من + إلى"); return; }
-
-    const { error } = await supabase
-      .from("schedules")
-      .insert([{ course_id: selectedCourse.id, day_of_week, start_time, end_time, notes }]);
-
-    if(error){ alert(error.message); return; }
-
-    document.getElementById("sDay").value="";
-    document.getElementById("sStart").value="";
-    document.getElementById("sEnd").value="";
-    document.getElementById("sNotes").value="";
-    loadSchedules();
-  }
-
-  window.loadSchedules = async function(){
-    if(!selectedCourse){ schBody.innerHTML = `<tr><td colspan="5">Pick course أولاً</td></tr>`; return; }
-
-    const { data, error } = await supabase
-      .from("schedules")
-      .select("*")
-      .eq("course_id", selectedCourse.id)
-      .order("id", {ascending:false});
-
-    if(error){ alert(error.message); return; }
-
-    schBody.innerHTML = "";
-    if(data.length===0){
-      schBody.innerHTML = `<tr><td colspan="5">مفيش مواعيد</td></tr>`;
-      return;
-    }
-
-    data.forEach(s=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${esc(s.day_of_week)}</td>
-        <td>${esc(s.start_time)}</td>
-        <td>${esc(s.end_time)}</td>
-        <td>${esc(s.notes||"")}</td>
-        <td><button onclick="delSchedule(${s.id})">Delete</button></td>
-      `;
-      schBody.appendChild(tr);
-    });
-  }
-
-  window.delSchedule = async function(id){
-    const { error } = await supabase.from("schedules").delete().eq("id", id);
-    if(error){ alert(error.message); return; }
-    loadSchedules();
-  }
-
-  window.loadPayments = async function(status){
-    const { data, error } = await supabase
-      .from("payments")
-      .select("*, users(full_name,phone_student,grade), courses(title,subject,teacher_name)")
-      .eq("status", status)
-      .order("id", {ascending:false});
-
-    if(error){ alert(error.message); return; }
-
-    payBody.innerHTML = "";
-    if(data.length===0){
-      payBody.innerHTML = `<tr><td colspan="4">مفيش طلبات</td></tr>`;
-      return;
-    }
-
-    data.forEach(p=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><b>${esc(p.users?.full_name||"")}</b><br>${esc(p.users?.phone_student||"")}<br><span class="muted">${esc(p.users?.grade||"")}</span></td>
-        <td><b>${esc(p.courses?.title||"")}</b><br>${esc(p.courses?.subject||"")} — ${esc(p.courses?.teacher_name||"")}</td>
-        <td>method: <b>${esc(p.method)}</b><br>note: <b>${esc(p.receipt_note||"")}</b></td>
-        <td>
-          <button onclick="setPay(${p.id},'approved')">Approve</button>
-          <button onclick="setPay(${p.id},'rejected')">Reject</button>
-        </td>
-      `;
-      payBody.appendChild(tr);
-    });
-  }
-
-  window.setPay = async function(id, status){
-    const { error } = await supabase.from("payments").update({ status }).eq("id", id);
-    if(error){ alert(error.message); return; }
-    loadPayments("pending");
-  }
-
-  function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
-
-  // init
+  document.getElementById("cTitle").value="";
+  document.getElementById("cTeacher").value="";
+  document.getElementById("cPrice").value="";
+  toast("تمت الإضافة ✅");
   loadCourses();
-  loadPayments("pending");
+  loadDashboard();
+};
+
+// SCHEDULES
+async function loadSchedules(){
+  if(!pickedCourse){
+    schBody.innerHTML = `<tr><td colspan="5">Pick course من تبويب Courses أولاً.</td></tr>`;
+    return;
+  }
+
+  const { data, error } = await supabase
+    .from("schedules")
+    .select("*")
+    .eq("course_id", pickedCourse.id)
+    .order("id", { ascending:false });
+
+  if(error){ alert(error.message); return; }
+
+  schBody.innerHTML = "";
+  if(!data || data.length===0){
+    schBody.innerHTML = `<tr><td colspan="5">مفيش مواعيد للكورس ده.</td></tr>`;
+    return;
+  }
+
+  data.forEach(s=>{
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${esc(s.day_of_week)}</td>
+      <td>${esc(s.start_time)}</td>
+      <td>${esc(s.end_time)}</td>
+      <td>${esc(s.notes||"")}</td>
+      <td><button class="btn danger" data-schdel="${s.id}">Delete</button></td>
+    `;
+    schBody.appendChild(tr);
+  });
+
+  schBody.querySelectorAll("[data-schdel]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.schdel);
+      if(!confirm("حذف الموعد؟")) return;
+      const { error } = await supabase.from("schedules").delete().eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم حذف الموعد ✅");
+      loadSchedules();
+      loadDashboard();
+    };
+  });
+}
+
+document.getElementById("sAddBtn").onclick = async ()=>{
+  if(!pickedCourse){ alert("Pick course أولاً"); return; }
+
+  const day_of_week = document.getElementById("sDay").value.trim();
+  const start_time = document.getElementById("sStart").value.trim();
+  const end_time = document.getElementById("sEnd").value.trim();
+  const notes = document.getElementById("sNotes").value.trim() || null;
+
+  if(!day_of_week || !start_time || !end_time){ alert("اكتب اليوم + من + إلى"); return; }
+
+  const { error } = await supabase.from("schedules")
+    .insert([{ course_id: pickedCourse.id, day_of_week, start_time, end_time, notes }]);
+
+  if(error){ alert(error.message); return; }
+
+  document.getElementById("sDay").value="";
+  document.getElementById("sStart").value="";
+  document.getElementById("sEnd").value="";
+  document.getElementById("sNotes").value="";
+  toast("تم إضافة الموعد ✅");
+  loadSchedules();
+  loadDashboard();
+};
+
+// PAYMENTS
+const payFilterTag = document.getElementById("payFilterTag");
+document.querySelectorAll("[data-payfilter]").forEach(b=>{
+  b.onclick = ()=>{
+    payFilter = b.dataset.payfilter;
+    payFilterTag.textContent = payFilter;
+    payFilterTag.className = "tag " + (payFilter==="pending"?"warn":(payFilter==="approved"?"ok":"bad"));
+    loadPayments();
+  };
+});
+
+async function loadPayments(){
+  const { data, error } = await supabase
+    .from("payments")
+    .select("id,status,method,receipt_note,created_at, users(full_name,phone_student,grade), courses(title,subject,teacher_name)")
+    .eq("status", payFilter)
+    .order("id", { ascending:false });
+
+  if(error){ alert(error.message); return; }
+
+  payBody.innerHTML = "";
+  if(!data || data.length===0){
+    payBody.innerHTML = `<tr><td colspan="4">مفيش طلبات</td></tr>`;
+    return;
+  }
+
+  data.forEach(p=>{
+    const statusTag =
+      p.status==="pending" ? `<span class="tag warn">pending</span>` :
+      p.status==="approved" ? `<span class="tag ok">approved</span>` :
+      `<span class="tag bad">rejected</span>`;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <b>${esc(p.users?.full_name||"")}</b>
+        <div class="small">${esc(p.users?.phone_student||"")} • ${esc(p.users?.grade||"")}</div>
+      </td>
+      <td>
+        <b>${esc(p.courses?.title||"")}</b>
+        <div class="small">${esc(p.courses?.subject||"")} • ${esc(p.courses?.teacher_name||"")}</div>
+      </td>
+      <td>
+        ${statusTag}
+        <div class="small">method: <b>${esc(p.method)}</b></div>
+        <div class="small">note: <b>${esc(p.receipt_note||"")}</b></div>
+      </td>
+      <td class="row" style="justify-content:flex-start">
+        <button class="btn primary" data-payset="${p.id}" data-st="approved">Approve</button>
+        <button class="btn danger" data-payset="${p.id}" data-st="rejected">Reject</button>
+      </td>
+    `;
+    payBody.appendChild(tr);
+  });
+
+  payBody.querySelectorAll("[data-payset]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.payset);
+      const status = b.dataset.st;
+      const { error } = await supabase.from("payments").update({ status }).eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم التحديث ✅");
+      loadPayments();
+      loadDashboard();
+    };
+  });
+}
+
+// VIDEOS
+async function loadVideos(){
+  if(!pickedCourse){
+    vidBody.innerHTML = `<tr><td colspan="6">Pick course من تبويب Courses أولاً.</td></tr>`;
+    return;
+  }
+
+  // IMPORTANT: videos are stored by grade + subject (your videos.html reads by grade/subject)
+  const { data, error } = await supabase
+    .from("video_library")
+    .select("*")
+    .eq("grade", pickedCourse.grade)
+    .eq("subject", pickedCourse.subject)
+    .order("order_index", { ascending:true });
+
+  if(error){ alert(error.message); return; }
+
+  vidBody.innerHTML = "";
+  if(!data || data.length===0){
+    vidBody.innerHTML = `<tr><td colspan="6">مفيش فيديوهات لسه.</td></tr>`;
+    return;
+  }
+
+  data.forEach(v=>{
+    const activeTag = v.is_active ? `<span class="tag ok">Active</span>` : `<span class="tag bad">Off</span>`;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><b>${esc(v.order_index)}</b></td>
+      <td><b>${esc(v.title)}</b></td>
+      <td>${esc(v.grade)} / ${esc(v.subject)}</td>
+      <td><a class="btn ghost" href="${esc(v.youtube_url)}" target="_blank" rel="noreferrer">Open</a></td>
+      <td>${activeTag}</td>
+      <td class="row" style="justify-content:flex-start">
+        <button class="btn" data-vtoggle="${v.id}">${v.is_active ? "Disable" : "Enable"}</button>
+        <button class="btn" data-vedit="${v.id}">Edit</button>
+        <button class="btn danger" data-vdel="${v.id}">Delete</button>
+      </td>
+    `;
+    vidBody.appendChild(tr);
+  });
+
+  // toggle
+  vidBody.querySelectorAll("[data-vtoggle]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.vtoggle);
+      const row = data.find(x=>x.id===id);
+      const { error } = await supabase.from("video_library").update({ is_active: !row.is_active }).eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم التحديث ✅");
+      loadVideos();
+      loadDashboard();
+    };
+  });
+
+  // delete
+  vidBody.querySelectorAll("[data-vdel]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.vdel);
+      if(!confirm("حذف الفيديو؟")) return;
+      const { error } = await supabase.from("video_library").delete().eq("id", id);
+      if(error){ alert(error.message); return; }
+      toast("تم حذف الفيديو ✅");
+      loadVideos();
+      loadDashboard();
+    };
+  });
+
+  // edit (simple prompt)
+  vidBody.querySelectorAll("[data-vedit]").forEach(b=>{
+    b.onclick = async ()=>{
+      const id = Number(b.dataset.vedit);
+      const row = data.find(x=>x.id===id);
+      const newTitle = prompt("Title جديد:", row.title);
+      if(newTitle===null) return;
+      const newUrl = prompt("YouTube URL جديد:", row.youtube_url);
+      if(newUrl===null) return;
+      const newOrderStr = prompt("Order جديد:", String(row.order_index));
+      if(newOrderStr===null) return;
+      const newOrder = Number(newOrderStr || row.order_index);
+
+      const { error } = await supabase
+        .from("video_library")
+        .update({ title: newTitle.trim() || row.title, youtube_url: newUrl.trim() || row.youtube_url, order_index: newOrder })
+        .eq("id", id);
+
+      if(error){ alert(error.message); return; }
+      toast("تم التعديل ✅");
+      loadVideos();
+      loadDashboard();
+    };
+  });
+}
+
+document.getElementById("vAddBtn").onclick = async ()=>{
+  if(!pickedCourse){ alert("Pick course أولاً"); return; }
+
+  const title = document.getElementById("vTitle").value.trim();
+  const youtube_url = document.getElementById("vUrl").value.trim();
+  const order_index = Number(document.getElementById("vOrder").value || 0);
+
+  if(!title || !youtube_url){ alert("اكتب عنوان + لينك يوتيوب"); return; }
+
+  const payload = {
+    grade: pickedCourse.grade,
+    subject: pickedCourse.subject,
+    title,
+    youtube_url,
+    order_index,
+    is_active: true
+  };
+
+  const { error } = await supabase.from("video_library").insert([payload]);
+  if(error){ alert(error.message); return; }
+
+  document.getElementById("vTitle").value="";
+  document.getElementById("vUrl").value="";
+  document.getElementById("vOrder").value="";
+  toast("تم إضافة الفيديو ✅");
+  loadVideos();
+  loadDashboard();
+};
+
+// Refresh buttons
+document.getElementById("coursesRefreshBtn").onclick = ()=>loadCourses();
+document.getElementById("schRefreshBtn").onclick = ()=>loadSchedules();
+document.getElementById("payRefreshBtn").onclick = ()=>loadPayments();
+document.getElementById("vidRefreshBtn").onclick = ()=>loadVideos();
+document.getElementById("refreshAllBtn").onclick = ()=>{
+  loadDashboard();
+  loadCourses();
+  loadPayments();
+  loadSchedules();
+  loadVideos();
+};
+
+// Init
+(async function init(){
+  await loadDashboard();
+  await loadCourses();
+  await loadPayments();
+  // schedules/videos load after picking course
+})();
 </script>
+
 </body>
 </html>
