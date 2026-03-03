@@ -1,218 +1,230 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Make Future | Login</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-
-<style>
-:root{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --accent:#7c3aed;
-  --accent2:#06b6d4;
-  --text:#f1f5f9;
-}
-
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  font-family:'Cairo',sans-serif;
-  background:linear-gradient(135deg,#0f172a,#111827);
-  color:var(--text);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-  padding:20px;
-}
-
-.container{
-  width:100%;
-  max-width:400px;
-  background:var(--card);
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 20px 50px rgba(0,0,0,.5);
-}
-
-.logo{
-  text-align:center;
-  font-weight:900;
-  font-size:24px;
-  margin-bottom:20px;
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.tabs{
-  display:flex;
-  margin-bottom:20px;
-}
-
-.tabs button{
-  flex:1;
-  padding:10px;
-  background:none;
-  border:none;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-}
-
-.tabs button.active{
-  border-color:var(--accent2);
-}
-
-input,select{
-  width:100%;
-  padding:10px;
-  margin-bottom:12px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.1);
-  background:#0f172a;
-  color:white;
-}
-
-button.main{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-  margin-top:10px;
-}
-
-.link{
-  text-align:center;
-  font-size:13px;
-  margin-top:10px;
-  cursor:pointer;
-  opacity:.7;
-}
-
-.link:hover{
-  opacity:1;
-}
-
-.form{
-  display:none;
-}
-
-.form.active{
-  display:block;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Login</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;display:grid;place-items:center;padding:20px}
+    .card{width:min(980px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
+    button,a{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{opacity:.82;font-size:13px;line-height:1.6}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+    .hr{height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.14),transparent);margin:12px 0}
+    .hint{opacity:.85;font-size:12px}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px}
+  </style>
 </head>
-
 <body>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:18px;font-weight:900">تسجيل / دخول</div>
+          <div class="muted">Supabase Auth + RLS ✅ (موبايل + باسورد)</div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="index.html">الرئيسية</a>
+        <a href="student.html">صفحة الطالب</a>
+        <a href="admin.html">لوحة الأدمن</a>
+      </div>
+    </div>
 
-<div class="container">
-  <div class="logo">Make Future</div>
+    <div class="grid">
 
-  <div class="tabs">
-    <button id="loginTab" class="active" onclick="switchTab('login')">Login</button>
-    <button id="signupTab" onclick="switchTab('signup')">Sign Up</button>
+      <!-- SIGNUP -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Sign up (طالب)</div>
+        <div class="hint" style="margin-top:6px">
+          بنحوّل رقم الموبايل لإيميل داخلي بالشكل:
+          <code>01xxxxxxxxx@makefuture.local</code>
+          عشان Auth يشتغل من غير OTP/SMS.
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">الاسم</div>
+          <input id="su_full_name" placeholder="اسم الطالب" autocomplete="name" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب</div>
+          <input id="su_phone_student" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل ولي الأمر</div>
+          <input id="su_phone_parent" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">السنة</div>
+          <select id="su_grade">
+            <option value="3prep">3 إعدادي</option>
+            <option value="1sec">1 ثانوي</option>
+            <option value="2sec">2 ثانوي</option>
+            <option value="3sec">3 ثانوي</option>
+          </select>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="su_password" type="password" placeholder="••••••••" autocomplete="new-password" />
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button onclick="signup()">تسجيل</button>
+          <button onclick="fillDemo()" style="opacity:.85">بيانات تجريبية</button>
+        </div><div class="muted" style="margin-top:10px">
+          ⚠️ لازم تقفل <b>Confirm Email</b> مؤقتًا من Supabase:
+          Authentication → Providers → Email → Disable "Confirm email"
+          (بعد ما تخلص نرجعه تاني)
+        </div>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Login</div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب</div>
+          <input id="li_phone" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="li_password" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button onclick="login()">دخول</button>
+          <button onclick="logout()" style="opacity:.85">خروج</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="muted">
+          بعد الدخول:
+          <ul style="margin:8px 0 0; padding:0 18px; line-height:1.8">
+            <li>الطالب يروح <b>student.html</b></li>
+            <li>الأدمن يروح <b>admin.html</b> (بعد ما تغيّر role إلى superadmin في جدول profiles)</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- LOGIN -->
-  <div id="loginForm" class="form active">
-    <input id="li_identity" placeholder="موبايل أو Username" />
-    <input id="li_password" type="password" placeholder="Password" />
-    <button class="main" onclick="login()">دخول</button>
-    <div class="link" onclick="resetPassword()">نسيت الباسورد؟</div>
-  </div>
+  <!-- IMPORTANT: this file depends on supabase-client.js -->
+  <script type="module">
+    import { supabase } from "./supabase-client.js";
 
-  <!-- SIGNUP -->
-  <div id="signupForm" class="form">
-    <input id="su_full_name" placeholder="اسم الطالب" />
-    <input id="su_phone_student" placeholder="موبايل الطالب" />
-    <input id="su_phone_parent" placeholder="موبايل ولي الأمر" />
-    <select id="su_grade">
-      <option value="3prep">3 إعدادي</option>
-      <option value="1sec">1 ثانوي</option>
-      <option value="2sec">2 ثانوي</option>
-      <option value="3sec">3 ثانوي</option>
-    </select>
-    <input id="su_username" placeholder="Username (اختياري)" />
-    <input id="su_password" type="password" placeholder="Password" />
-    <button class="main" onclick="signup()">تسجيل</button>
-  </div>
-</div>
+    function phoneToEmail(phone){
+      const clean = String(phone||"").replace(/\D/g,"");
+      return ${clean}@makefuture.local;
+    }
 
-<script type="module">
-import { supabase } from "./supabase-client.js";
+    function isEgyptPhone(p){
+      const clean = String(p||"").replace(/\D/g,"");
+      return clean.length >= 10; // basic check
+    }
 
-window.switchTab = function(type){
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-  document.querySelectorAll(".form").forEach(f=>f.classList.remove("active"));
+    window.fillDemo = function(){
+      document.getElementById("su_full_name").value = "طالب تجريبي";
+      document.getElementById("su_phone_student").value = "01000000000";
+      document.getElementById("su_phone_parent").value = "01100000000";
+      document.getElementById("su_grade").value = "3prep";
+      document.getElementById("su_password").value = "12345678";
+    }
 
-  if(type==="login"){
-    loginTab.classList.add("active");
-    loginForm.classList.add("active");
-  } else {
-    signupTab.classList.add("active");
-    signupForm.classList.add("active");
-  }
-}
+    window.signup = async function(){
+      const full_name = document.getElementById("su_full_name").value.trim();
+      const phone_student = document.getElementById("su_phone_student").value.trim();
+      const phone_parent = document.getElementById("su_phone_parent").value.trim();
+      const grade = document.getElementById("su_grade").value;
+      const password = document.getElementById("su_password").value.trim();
 
-window.signup = async function(){
-  const full_name = su_full_name.value;
-  const phone_student = su_phone_student.value;
-  const phone_parent = su_phone_parent.value;
-  const grade = su_grade.value;
-  const username = su_username.value || null;
-  const password = su_password.value;
+      if(!full_name  !phone_student  !phone_parent  !grade  !password){
+        alert("املأ البيانات المطلوبة");
+        return;
+      }
+      if(!isEgyptPhone(phone_student) || !isEgyptPhone(phone_parent)){
+        alert("اكتب رقم موبايل صحيح");
+        return;
+      }
+      if(password.length < 6){
+        alert("الباسورد لازم 6 حروف/أرقام على الأقل");
+        return;
+      }
 
-  const { data, error } = await supabase
-    .from("users")
-    .insert([{ full_name, phone_student, phone_parent, grade, username, password }])
-    .select()
-    .single();
+      const email = phoneToEmail(phone_student);
 
-  if(error){ alert(error.message); return; }
+      // 1) Auth signup + metadata (trigger reads full_name/grade)
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name, grade } }
+      });
 
-  localStorage.setItem("mf_user", JSON.stringify(data));
-  location.href="student.html";
-}
+      if(error){
+        alert("Signup error: " + error.message);
+        return;
+      }
 
-window.login = async function(){
-  const identity = li_identity.value;
-  const password = li_password.value;
+      // 2) session/user id (needs Confirm Email OFF for instant session)
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess?.session?.user?.id || data?.user?.id;
 
-  let query = supabase.from("users").select("*").limit(1);
+      if(!uid){
+        alert("تم التسجيل لكن مفيش Session. اقفل Confirm Email من Supabase مؤقتًا.");
+        return;
+      }
 
-  if(identity.startsWith("01")){
-    query = query.eq("phone_student", identity);
-  } else {
-    query = query.eq("username", identity);
-  }
+      // 3) update profile fields (phones + grade + name)
+      const { error: e2 } = await supabase
+        .from("profiles")
+        .update({ full_name, phone_student, phone_parent, grade })
+        .eq("id", uid);
 
-  const { data } = await query.maybeSingle();
+      if(e2){
+        alert("Profile update error: " + e2.message);
+        return;
+      }
 
-  if(!data){ alert("الحساب غير موجود"); return; }
-  if(data.password !== password){ alert("باسورد غلط"); return; }
+      alert("تم التسجيل ✅");
+      location.href = "student.html";
+    }
+      window.login = async function(){
+      const phone = document.getElementById("li_phone").value.trim();
+      const password = document.getElementById("li_password").value.trim();
 
-  localStorage.setItem("mf_user", JSON.stringify(data));
-  location.href="student.html";
-}
+      if(!phone || !password){
+        alert("اكتب رقم الموبايل والباسورد");
+        return;
+      }
+      const email = phoneToEmail(phone);
 
-window.resetPassword = function(){
-  const phone = prompt("اكتب رقم موبايلك:");
-  if(!phone) return;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if(error){
+        alert("Login error: " + error.message);
+        return;
+      }
 
-  alert("حاليًا تواصل مع الدعم على واتساب لإعادة تعيين الباسورد.");
-  window.open("https://wa.me/201210575530","_blank");
-}
-</script>
+      alert("تم تسجيل الدخول ✅");
+      location.href = "student.html";
+    }
 
+    window.logout = async function(){
+      await supabase.auth.signOut();
+      alert("تم تسجيل الخروج");
+    }
+  </script>
 </body>
 </html>
