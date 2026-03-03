@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Admin</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;padding:20px}
+    .card{max-width:1200px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+    a,button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .tabBtn.active{background:rgba(255,255,255,.14)}
+    .tab{display:none;margin-top:14px}
+    .tab.active{display:block}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-top:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border-bottom:1px solid rgba(255,255,255,.12);padding:10px;font-size:13px;vertical-align:top}
+    th{text-align:right;opacity:.85}
+    .muted{opacity:.82;font-size:13px;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row">
+      <div class="row" style="justify-content:flex-start">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:18px;font-weight:900">لوحة الأدمن</div>
+          <div class="muted">Superadmin فقط</div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="index.html">الرئيسية</a>
+        <button onclick="logout()">خروج</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tabBtn active" onclick="openTab('courses',this)">Courses</button>
+      <button class="tabBtn" onclick="openTab('schedules',this)">Schedules</button>
+      <button class="tabBtn" onclick="openTab('payments',this)">Payments</button>
+    </div>
+
+    <!-- Courses -->
+    <div id="courses" class="tab active">
+      <div class="box">
+        <div class="grid">
+          <div>
+            <div class="muted">Grade</div>
+            <select id="grade">
+              <option value="3prep">3prep</option>
+              <option value="1sec">1sec</option>
+              <option value="2sec">2sec</option>
+              <option value="3sec">3sec</option>
+            </select>
+          </div>
+          <div>
+            <div class="muted">Subject</div>
+            <select id="subject">
+              <option value="Math">Math</option>
+              <option value="English">English</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:10px">
+          <div>
+            <div class="muted">Title</div>
+            <input id="cTitle" placeholder="Course title" />
+          </div>
+          <div>
+            <div class="muted">Teacher</div>
+            <input id="cTeacher" placeholder="Teacher name" />
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:10px">
+          <div>
+            <div class="muted">Price</div>
+            <input id="cPrice" type="number" placeholder="200" />
+          </div>
+          <div class="row" style="justify-content:flex-start;align-items:end">
+            <button onclick="createCourse()">Add Course</button>
+            <button onclick="loadCourses()" style="opacity:.85">Refresh</button>
+          </div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th><th>Teacher</th><th>Price</th><th>Active</th><th>Pick</th>
+            </tr>
+          </thead>
+          <tbody id="coursesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Schedules -->
+    <div id="schedules" class="tab">
+      <div class="box">
+        <div class="muted">Course selected:</div>
+        <div id="picked" style="font-weight:900;margin-top:6px">—</div>
+
+        <div class="grid" style="margin-top:12px">
+          <div>
+            <div class="muted">Day</div>
+            <input id="sDay" placeholder="السبت" />
+          </div>
+          <div>
+            <div class="muted">Notes</div>
+            <input id="sNotes" placeholder="اختياري" />
+          </div>
+        </div>
+
+        <div class="grid" style="margin-top:10px">
+          <div>
+            <div class="muted">Start</div>
+            <input id="sStart" placeholder="5:00 PM" />
+          </div>
+          <div>
+            <div class="muted">End</div>
+            <input id="sEnd" placeholder="6:30 PM" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:12px;justify-content:flex-start">
+          <button onclick="addSchedule()">Add Schedule</button>
+          <button onclick="loadSchedules()" style="opacity:.85">Refresh</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Day</th><th>Start</th><th>End</th><th>Notes</th><th>Action</th></tr>
+          </thead>
+          <tbody id="schBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Payments -->
+    <div id="payments" class="tab">
+      <div class="box">
+        <div class="row" style="justify-content:flex-start">
+          <button onclick="loadPayments('pending')">Pending</button>
+          <button onclick="loadPayments('approved')">Approved</button>
+          <button onclick="loadPayments('rejected')">Rejected</button>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Student</th><th>Course</th><th>Info</th><th>Action</th></tr>
+          </thead>
+          <tbody id="payBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+  if(!me) location.href="login.html";
+  if(me.role !== "superadmin") { alert("Superadmin only"); location.href="student.html"; }
+
+  window.logout = function(){
+    localStorage.removeItem("mf_user");
+    location.href="login.html";
+  }
+
+  window.openTab = function(id, btn){
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tabBtn").forEach(x=>x.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    btn.classList.add("active");
+  }
+
+  const coursesBody = document.getElementById("coursesBody");
+  const schBody = document.getElementById("schBody");
+  const payBody = document.getElementById("payBody");
+  const picked = document.getElementById("picked");
+
+  let selectedCourse = null;
+
+  window.createCourse = async function(){
+    const grade = document.getElementById("grade").value;
+    const subject = document.getElementById("subject").value;
+    const title = document.getElementById("cTitle").value.trim();
+    const teacher_name = document.getElementById("cTeacher").value.trim();
+    const price = Number(document.getElementById("cPrice").value || 0);
+
+    if(!title || !teacher_name){ alert("اكتب title و teacher"); return; }
+
+    const { error } = await supabase
+      .from("courses")
+      .insert([{ grade, subject, title, teacher_name, price, is_active:true }]);
+
+    if(error){ alert(error.message); return; }
+    alert("Added ✅");
+    document.getElementById("cTitle").value="";
+    document.getElementById("cTeacher").value="";
+    document.getElementById("cPrice").value="";
+    loadCourses();
+  }
+
+  window.loadCourses = async function(){
+    const { data, error } = await supabase
+      .from("courses")
+      .select("*")
+      .order("id", {ascending:false});
+
+    if(error){ alert(error.message); return; }
+
+    coursesBody.innerHTML = "";
+    data.forEach(c=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${esc(c.title)}</b><br><span class="muted">${esc(c.grade)} — ${esc(c.subject)}</span></td>
+        <td>${esc(c.teacher_name)}</td>
+        <td>${esc(c.price)}</td>
+        <td>${c.is_active ? "✅" : "❌"}</td>
+        <td><button onclick='pickCourse(${JSON.stringify(c)})'>Pick</button></td>
+      `;
+      coursesBody.appendChild(tr);
+    });
+  }
+
+  window.pickCourse = async function(course){
+    selectedCourse = course;
+    picked.textContent = `${course.title} (ID: ${course.id})`;
+    openTab("schedules", document.querySelectorAll(".tabBtn")[1]);
+    loadSchedules();
+  }
+
+  window.addSchedule = async function(){
+    if(!selectedCourse){ alert("Pick course أولاً"); return; }
+
+    const day_of_week = document.getElementById("sDay").value.trim();
+    const start_time = document.getElementById("sStart").value.trim();
+    const end_time = document.getElementById("sEnd").value.trim();
+    const notes = document.getElementById("sNotes").value.trim() || null;
+
+    if(!day_of_week || !start_time || !end_time){ alert("اكتب اليوم + من + إلى"); return; }
+
+    const { error } = await supabase
+      .from("schedules")
+      .insert([{ course_id: selectedCourse.id, day_of_week, start_time, end_time, notes }]);
+
+    if(error){ alert(error.message); return; }
+
+    document.getElementById("sDay").value="";
+    document.getElementById("sStart").value="";
+    document.getElementById("sEnd").value="";
+    document.getElementById("sNotes").value="";
+    loadSchedules();
+  }
+
+  window.loadSchedules = async function(){
+    if(!selectedCourse){ schBody.innerHTML = `<tr><td colspan="5">Pick course أولاً</td></tr>`; return; }
+
+    const { data, error } = await supabase
+      .from("schedules")
+      .select("*")
+      .eq("course_id", selectedCourse.id)
+      .order("id", {ascending:false});
+
+    if(error){ alert(error.message); return; }
+
+    schBody.innerHTML = "";
+    if(data.length===0){
+      schBody.innerHTML = `<tr><td colspan="5">مفيش مواعيد</td></tr>`;
+      return;
+    }
+
+    data.forEach(s=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${esc(s.day_of_week)}</td>
+        <td>${esc(s.start_time)}</td>
+        <td>${esc(s.end_time)}</td>
+        <td>${esc(s.notes||"")}</td>
+        <td><button onclick="delSchedule(${s.id})">Delete</button></td>
+      `;
+      schBody.appendChild(tr);
+    });
+  }
+
+  window.delSchedule = async function(id){
+    const { error } = await supabase.from("schedules").delete().eq("id", id);
+    if(error){ alert(error.message); return; }
+    loadSchedules();
+  }
+
+  window.loadPayments = async function(status){
+    const { data, error } = await supabase
+      .from("payments")
+      .select("*, users(full_name,phone_student,grade), courses(title,subject,teacher_name)")
+      .eq("status", status)
+      .order("id", {ascending:false});
+
+    if(error){ alert(error.message); return; }
+
+    payBody.innerHTML = "";
+    if(data.length===0){
+      payBody.innerHTML = `<tr><td colspan="4">مفيش طلبات</td></tr>`;
+      return;
+    }
+
+    data.forEach(p=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><b>${esc(p.users?.full_name||"")}</b><br>${esc(p.users?.phone_student||"")}<br><span class="muted">${esc(p.users?.grade||"")}</span></td>
+        <td><b>${esc(p.courses?.title||"")}</b><br>${esc(p.courses?.subject||"")} — ${esc(p.courses?.teacher_name||"")}</td>
+        <td>method: <b>${esc(p.method)}</b><br>note: <b>${esc(p.receipt_note||"")}</b></td>
+        <td>
+          <button onclick="setPay(${p.id},'approved')">Approve</button>
+          <button onclick="setPay(${p.id},'rejected')">Reject</button>
+        </td>
+      `;
+      payBody.appendChild(tr);
+    });
+  }
+
+  window.setPay = async function(id, status){
+    const { error } = await supabase.from("payments").update({ status }).eq("id", id);
+    if(error){ alert(error.message); return; }
+    loadPayments("pending");
+  }
+
+  function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+  // init
+  loadCourses();
+  loadPayments("pending");
+</script>
+</body>
+</html>
