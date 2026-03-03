@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Login</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;display:grid;place-items:center;padding:20px}
+    .card{width:min(920px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
+    button,a{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{opacity:.82;font-size:13px;line-height:1.6}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:18px;font-weight:900">تسجيل / دخول</div>
+          <div class="muted">اختيارات الدخول: موبايل+باسورد / يوزر+باسورد (OTP بعدين)</div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="index.html">الرئيسية</a>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- SIGNUP -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Sign up (طالب)</div>
+
+        <div style="margin-top:10px">
+          <div class="muted">الاسم</div>
+          <input id="su_full_name" placeholder="اسم الطالب" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب</div>
+          <input id="su_phone_student" placeholder="01xxxxxxxxx" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل ولي الأمر</div>
+          <input id="su_phone_parent" placeholder="01xxxxxxxxx" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">السنة</div>
+          <select id="su_grade">
+            <option value="3prep">3 إعدادي</option>
+            <option value="1sec">1 ثانوي</option>
+            <option value="2sec">2 ثانوي</option>
+            <option value="3sec">3 ثانوي</option>
+          </select>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Username (اختياري)</div>
+          <input id="su_username" placeholder="username" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="su_password" type="password" placeholder="••••••••" />
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button onclick="signup()">تسجيل</button>
+        </div>
+        <div class="muted" style="margin-top:8px">بعد التسجيل هيدخلك على صفحة الطالب.</div>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Login</div>
+
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب أو Username</div>
+          <input id="li_identity" placeholder="01xxxxxxxxx أو username" />
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="li_password" type="password" placeholder="••••••••" />
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button onclick="login()">دخول</button>
+          <button onclick="logout()" style="opacity:.8">مسح الجلسة</button>
+        </div>
+
+        <div class="muted" style="margin-top:10px">
+          لو انت أدمن/سوبر أدمن: بعد الدخول افتح <b>admin.html</b>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  window.logout = function(){
+    localStorage.removeItem("mf_user");
+    alert("تم مسح الجلسة");
+  }
+
+  window.signup = async function(){
+    const full_name = document.getElementById("su_full_name").value.trim();
+    const phone_student = document.getElementById("su_phone_student").value.trim();
+    const phone_parent = document.getElementById("su_phone_parent").value.trim();
+    const grade = document.getElementById("su_grade").value;
+    const username = document.getElementById("su_username").value.trim() || null;
+    const password = document.getElementById("su_password").value.trim();
+
+    if(!full_name || !phone_student || !phone_parent || !grade || !password){
+      alert("املأ البيانات المطلوبة");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("users")
+      .insert([{ full_name, phone_student, phone_parent, grade, username, password, role:"student" }])
+      .select()
+      .single();
+
+    if(error){
+      alert("Error: " + error.message);
+      return;
+    }
+
+    localStorage.setItem("mf_user", JSON.stringify(data));
+    location.href = "student.html";
+  }
+
+  window.login = async function(){
+    const identity = document.getElementById("li_identity").value.trim();
+    const password = document.getElementById("li_password").value.trim();
+
+    if(!identity || !password){
+      alert("اكتب البيانات");
+      return;
+    }
+
+    // try phone
+    let q = supabase.from("users").select("*").limit(1);
+
+    if(identity.startsWith("01")){
+      q = q.eq("phone_student", identity);
+    } else {
+      q = q.eq("username", identity);
+    }
+
+    const { data, error } = await q.maybeSingle();
+    if(error){ alert("Error: " + error.message); return; }
+    if(!data){ alert("الحساب غير موجود"); return; }
+
+    if(data.password !== password){
+      alert("باسورد غلط");
+      return;
+    }
+
+    localStorage.setItem("mf_user", JSON.stringify(data));
+    location.href = "student.html";
+  }
+</script>
+</body>
+</html>
