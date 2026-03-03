@@ -13,11 +13,12 @@
     .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
     input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
     button,a{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    button:hover,a:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
     .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
     .muted{opacity:.82;font-size:13px;line-height:1.6}
     .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
     .hr{height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.14),transparent);margin:12px 0}
-    .hint{opacity:.85;font-size:12px}
+    .status{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);font-size:13px;line-height:1.6}
     code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px}
   </style>
 </head>
@@ -39,14 +40,11 @@
     </div>
 
     <div class="grid">
-
       <!-- SIGNUP -->
       <div class="box">
         <div style="font-weight:900;font-size:16px">Sign up (طالب)</div>
-        <div class="hint" style="margin-top:6px">
-          بنحوّل رقم الموبايل لإيميل داخلي بالشكل:
-          <code>01xxxxxxxxx@makefuture.local</code>
-          عشان Auth يشتغل من غير OTP/SMS.
+        <div class="muted" style="margin-top:6px">
+          بنحوّل رقم الموبايل لإيميل داخلي: <code>01xxxxxxxxx@makefuture.local</code>
         </div>
 
         <div style="margin-top:10px">
@@ -80,13 +78,16 @@
         </div>
 
         <div class="row" style="margin-top:12px">
-          <button onclick="signup()">تسجيل</button>
-          <button onclick="fillDemo()" style="opacity:.85">بيانات تجريبية</button>
-        </div><div class="muted" style="margin-top:10px">
-          ⚠️ لازم تقفل <b>Confirm Email</b> مؤقتًا من Supabase:
-          Authentication → Providers → Email → Disable "Confirm email"
-          (بعد ما تخلص نرجعه تاني)
+          <button type="button" id="btnSignup">تسجيل</button>
+          <button type="button" id="btnDemo" style="opacity:.85">بيانات تجريبية</button>
         </div>
+
+        <div class="muted" style="margin-top:10px">
+          ⚠️ لازم تقفل Confirm Email مؤقتًا:
+          Authentication → Providers → Email → Disable “Confirm email”
+        </div>
+
+        <div id="su_status" class="status">جاهز للتسجيل…</div>
       </div>
 
       <!-- LOGIN -->
@@ -104,127 +105,145 @@
         </div>
 
         <div class="row" style="margin-top:12px">
-          <button onclick="login()">دخول</button>
-          <button onclick="logout()" style="opacity:.85">خروج</button>
+          <button type="button" id="btnLogin">دخول</button>
+          <button type="button" id="btnLogout" style="opacity:.85">خروج</button>
         </div>
 
         <div class="hr"></div>
 
-        <div class="muted">
-          بعد الدخول:
-          <ul style="margin:8px 0 0; padding:0 18px; line-height:1.8">
-            <li>الطالب يروح <b>student.html</b></li>
-            <li>الأدمن يروح <b>admin.html</b> (بعد ما تغيّر role إلى superadmin في جدول profiles)</li>
-          </ul>
-        </div>
+        <div id="li_status" class="status">جاهز للدخول…</div>
       </div>
-
     </div>
   </div>
 
-  <!-- IMPORTANT: this file depends on supabase-client.js -->
   <script type="module">
-    import { supabase } from "./supabase-client.js";
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+    const SUPABASE_URL = "https://anlstahxxpbbfnwrwulu.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFubHN0YWh4eHBiYmZud3J3dWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDQzMTIsImV4cCI6MjA4ODEyMDMxMn0.4RQxQ4AZZCVCswTRdJoZ7Jz9qNwQq0fPs7vitnMJ3A4";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const suStatus = document.getElementById("su_status");
+    const liStatus = document.getElementById("li_status");
+
+    const setStatus = (el, msg) => (el.textContent = msg);
 
     function phoneToEmail(phone){
       const clean = String(phone||"").replace(/\D/g,"");
-      return ${clean}@makefuture.local;
+      return `${clean}@makefuture.local`;
     }
 
-    function isEgyptPhone(p){
+    function isPhoneOk(p){
       const clean = String(p||"").replace(/\D/g,"");
-      return clean.length >= 10; // basic check
+      return clean.length >= 10;
     }
 
-    window.fillDemo = function(){
+    document.getElementById("btnDemo").addEventListener("click", ()=>{
       document.getElementById("su_full_name").value = "طالب تجريبي";
       document.getElementById("su_phone_student").value = "01000000000";
       document.getElementById("su_phone_parent").value = "01100000000";
       document.getElementById("su_grade").value = "3prep";
       document.getElementById("su_password").value = "12345678";
-    }
+      setStatus(suStatus, "تم ملء بيانات تجريبية.");
+    });
 
-    window.signup = async function(){
-      const full_name = document.getElementById("su_full_name").value.trim();
-      const phone_student = document.getElementById("su_phone_student").value.trim();
-      const phone_parent = document.getElementById("su_phone_parent").value.trim();
-      const grade = document.getElementById("su_grade").value;
-      const password = document.getElementById("su_password").value.trim();
+    document.getElementById("btnSignup").addEventListener("click", async ()=>{
+      try{
+        setStatus(suStatus, "جارٍ التسجيل…");
 
-      if(!full_name  !phone_student  !phone_parent  !grade  !password){
-        alert("املأ البيانات المطلوبة");
-        return;
+        const full_name = document.getElementById("su_full_name").value.trim();
+        const phone_student = document.getElementById("su_phone_student").value.trim();
+        const phone_parent = document.getElementById("su_phone_parent").value.trim();
+        const grade = document.getElementById("su_grade").value;
+        const password = document.getElementById("su_password").value.trim();
+
+        if(!full_name || !phone_student || !phone_parent || !grade || !password){
+          setStatus(suStatus, "املأ البيانات المطلوبة.");
+          return;
+        }
+        if(!isPhoneOk(phone_student) || !isPhoneOk(phone_parent)){
+          setStatus(suStatus, "اكتب أرقام موبايل صحيحة.");
+          return;
+        }
+        if(password.length < 6){
+          setStatus(suStatus, "الباسورد لازم 6 أحرف/أرقام على الأقل.");
+          return;
+        }
+
+        const email = phoneToEmail(phone_student);
+
+        // Auth signup + metadata (trigger reads full_name/grade)
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { full_name, grade } }
+        });
+
+        if(error){
+          setStatus(suStatus, "Signup error: " + error.message);
+          return;
+        }
+
+        // needs Confirm Email OFF to get session right away
+        const { data: sess } = await supabase.auth.getSession();
+        const uid = sess?.session?.user?.id || data?.user?.id;
+
+        if(!uid){
+          setStatus(suStatus, "اتسجلت لكن مفيش Session. اقفل Confirm Email مؤقتًا.");
+          return;
+        }
+
+        // update profile details (phones + grade + name)
+        const { error: e2 } = await supabase
+          .from("profiles")
+          .update({ full_name, phone_student, phone_parent, grade })
+          .eq("id", uid);
+
+        if(e2){
+          setStatus(suStatus, "Profile update error: " + e2.message);
+          return;
+        }
+
+        setStatus(suStatus, "تم التسجيل ✅ هتتحول لصفحة الطالب…");
+        location.href = "student.html";
+      } catch(e){
+        setStatus(suStatus, "Unexpected error: " + (e?.message || e));
       }
-      if(!isEgyptPhone(phone_student) || !isEgyptPhone(phone_parent)){
-        alert("اكتب رقم موبايل صحيح");
-        return;
+    });
+
+    document.getElementById("btnLogin").addEventListener("click", async ()=>{
+      try{
+        setStatus(liStatus, "جارٍ تسجيل الدخول…");
+
+        const phone = document.getElementById("li_phone").value.trim();
+        const password = document.getElementById("li_password").value.trim();
+
+        if(!phone || !password){
+          setStatus(liStatus, "اكتب رقم الموبايل والباسورد.");
+          return;
+        }
+
+        const email = phoneToEmail(phone);
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error){
+          setStatus(liStatus, "Login error: " + error.message);
+          return;
+        }
+
+        setStatus(liStatus, "تم تسجيل الدخول ✅ هتتحول لصفحة الطالب…");
+        location.href = "student.html";
+      } catch(e){
+        setStatus(liStatus, "Unexpected error: " + (e?.message || e));
       }
-      if(password.length < 6){
-        alert("الباسورد لازم 6 حروف/أرقام على الأقل");
-        return;
-      }
+    });
 
-      const email = phoneToEmail(phone_student);
-
-      // 1) Auth signup + metadata (trigger reads full_name/grade)
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name, grade } }
-      });
-
-      if(error){
-        alert("Signup error: " + error.message);
-        return;
-      }
-
-      // 2) session/user id (needs Confirm Email OFF for instant session)
-      const { data: sess } = await supabase.auth.getSession();
-      const uid = sess?.session?.user?.id || data?.user?.id;
-
-      if(!uid){
-        alert("تم التسجيل لكن مفيش Session. اقفل Confirm Email من Supabase مؤقتًا.");
-        return;
-      }
-
-      // 3) update profile fields (phones + grade + name)
-      const { error: e2 } = await supabase
-        .from("profiles")
-        .update({ full_name, phone_student, phone_parent, grade })
-        .eq("id", uid);
-
-      if(e2){
-        alert("Profile update error: " + e2.message);
-        return;
-      }
-
-      alert("تم التسجيل ✅");
-      location.href = "student.html";
-    }
-      window.login = async function(){
-      const phone = document.getElementById("li_phone").value.trim();
-      const password = document.getElementById("li_password").value.trim();
-
-      if(!phone || !password){
-        alert("اكتب رقم الموبايل والباسورد");
-        return;
-      }
-      const email = phoneToEmail(phone);
-
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if(error){
-        alert("Login error: " + error.message);
-        return;
-      }
-
-      alert("تم تسجيل الدخول ✅");
-      location.href = "student.html";
-    }
-
-    window.logout = async function(){
+    document.getElementById("btnLogout").addEventListener("click", async ()=>{
       await supabase.auth.signOut();
-      alert("تم تسجيل الخروج");
-    }
+      setStatus(liStatus, "تم تسجيل الخروج.");
+    });
   </script>
 </body>
 </html>
