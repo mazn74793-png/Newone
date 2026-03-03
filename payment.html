@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Payment</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;padding:20px}
+    .card{max-width:900px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+    a,button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-top:12px}
+    select,input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
+    .muted{opacity:.82;font-size:13px;line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row">
+      <div class="row" style="justify-content:flex-start">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:18px;font-weight:900">الدفع</div>
+          <div class="muted">Vodafone Cash / InstaPay على: <b>01210575530</b></div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="student.html">رجوع</a>
+        <a href="https://wa.me/201210575530" target="_blank" rel="noreferrer">واتساب الدعم</a>
+      </div>
+    </div>
+
+    <div class="box">
+      <div style="font-weight:900">الكورس المختار</div>
+      <div class="muted" id="info" style="margin-top:8px">...</div>
+    </div>
+
+    <div class="box">
+      <div style="font-weight:900">بيانات الدفع</div>
+
+      <div style="margin-top:10px">
+        <div class="muted">طريقة الدفع</div>
+        <select id="method">
+          <option value="vodafone_cash">Vodafone Cash</option>
+          <option value="instapay">InstaPay</option>
+        </select>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="muted">رقم العملية / ملاحظة (اكتب أي إثبات)</div>
+        <input id="note" placeholder="مثال: آخر 4 أرقام / رقم عملية / وقت التحويل" />
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button onclick="sendReq()">إرسال طلب الدفع</button>
+      </div>
+
+      <div class="muted" style="margin-top:10px">
+        بعد الإرسال الحالة بتكون <b>pending</b> لحد ما الأدمن يوافق.
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  import { supabase } from "./supabase-client.js";
+
+  const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+  const c = JSON.parse(localStorage.getItem("mf_selected_course") || "null");
+  if(!me) location.href="login.html";
+  if(!c) location.href="student.html";
+
+  document.getElementById("info").innerHTML =
+    `<b>${esc(c.title)}</b><br>${esc(c.subject)} — ${esc(c.teacher_name)} — السعر: <b>${esc(c.price)}</b>`;
+
+  window.sendReq = async function(){
+    const method = document.getElementById("method").value;
+    const receipt_note = document.getElementById("note").value.trim();
+
+    const { data, error } = await supabase
+      .from("payments")
+      .insert([{ user_id: me.id, course_id: c.id, method, receipt_note, status:"pending" }])
+      .select()
+      .single();
+
+    if(error){ alert(error.message); return; }
+
+    alert("تم إرسال طلب الدفع ✅");
+    location.href="student.html";
+  }
+
+  function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+</script>
+</body>
+</html>
