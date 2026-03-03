@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;display:grid;place-items:center;padding:20px}
+    .card{width:min(920px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    a,button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    a:hover,button:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+    .hero{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-top:14px}
+    @media (max-width:900px){.hero{grid-template-columns:1fr}}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+    .logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+    .muted{opacity:.82;font-size:13px;line-height:1.7}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="row">
+      <div class="row" style="justify-content:flex-start">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:22px;font-weight:900">Make Future</div>
+          <div class="muted">من 3 إعدادي لحد 3 ثانوي — Math & English</div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="login.html">تسجيل / دخول</a>
+        <a href="https://wa.me/201210575530" target="_blank" rel="noreferrer">واتساب الدعم</a>
+      </div>
+    </div>
+
+    <div class="hero">
+      <div class="box">
+        <div style="font-size:18px;font-weight:900">كل حاجة منظمة في مكان واحد</div>
+        <div class="muted" style="margin-top:8px">
+          • الطالب يشوف الكورسات والمواعيد قبل الدفع<br>
+          • الدفع Vodafone Cash / InstaPay<br>
+          • الأدمن يوافق الدفع ويفتح الفيديوهات
+        </div>
+      </div>
+      <div class="box">
+        <div style="font-weight:900">التواصل</div>
+        <div class="muted" style="margin-top:8px">
+          قباء – جسر السويس<br>
+          01210575530 / 01006693681
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
