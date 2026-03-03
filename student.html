@@ -35,6 +35,7 @@ body{
   backdrop-filter:blur(10px);
   position:sticky;
   top:0;
+  z-index:10;
 }
 
 .logo{
@@ -45,30 +46,35 @@ body{
   -webkit-text-fill-color:transparent;
 }
 
+.nav .actions{
+  display:flex; gap:10px; flex-wrap:wrap;
+}
 .nav button{
-  background:var(--accent);
-  border:none;
-  padding:8px 15px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 14px;
   border-radius:12px;
   color:white;
-  font-weight:bold;
+  font-weight:800;
+  cursor:pointer;
+  transition:.25s;
+}
+.nav button:hover{
+  background:rgba(255,255,255,.14);
+  transform:translateY(-1px);
+}
+.nav button.primary{
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  border:none;
 }
 
 /* Hero */
 .hero{
   text-align:center;
-  padding:40px 20px;
+  padding:34px 20px 16px;
 }
-
-.hero h1{
-  font-size:28px;
-  margin:0;
-}
-
-.hero p{
-  opacity:.7;
-  margin-top:10px;
-}
+.hero h1{font-size:26px;margin:0}
+.hero p{opacity:.7;margin-top:8px}
 
 /* Grid */
 .container{
@@ -91,36 +97,23 @@ body{
   transition:.3s;
   border:1px solid rgba(255,255,255,.05);
 }
-
 .card:hover{
   transform:translateY(-5px);
   box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
-
-.card h3{
-  margin:0 0 10px;
-}
-
+.card h3{margin:0 0 10px}
+.card .meta{opacity:.8;font-size:13px;line-height:1.7}
 .card button{
-  margin-top:10px;
+  margin-top:12px;
   width:100%;
   background:linear-gradient(45deg,var(--accent),var(--accent2));
   border:none;
   padding:10px;
   border-radius:12px;
   color:white;
-  font-weight:bold;
+  font-weight:900;
   cursor:pointer;
 }
-
-.status{
-  margin-top:15px;
-  padding:10px;
-  border-radius:12px;
-  background:rgba(255,255,255,.05);
-  font-size:13px;
-}
-
 @media(max-width:500px){
   .hero h1{font-size:22px}
 }
@@ -131,11 +124,16 @@ body{
 
 <div class="nav">
   <div class="logo">Make Future</div>
-  <button onclick="logout()">خروج</button>
+  <div class="actions">
+    <button class="primary" onclick="location.href='payment.html'">الدفع</button>
+    <button onclick="location.href='videos.html'">الفيديوهات</button>
+    <button id="adminBtn" style="display:none" onclick="location.href='admin.html'">لوحة الأدمن</button>
+    <button onclick="logout()">خروج</button>
+  </div>
 </div>
 
 <div class="hero">
-  <h1 id="welcome"></h1>
+  <h1 id="welcome">...</h1>
   <p>اختر الكورس المناسب وابدأ رحلتك</p>
 </div>
 
@@ -146,29 +144,42 @@ body{
 <script type="module">
 import { supabase } from "./supabase-client.js";
 
-const user = JSON.parse(localStorage.getItem("mf_user"));
+const user = JSON.parse(localStorage.getItem("mf_user") || "null");
 if(!user) location.href="login.html";
 
-document.getElementById("welcome").innerText = "أهلاً " + user.full_name;
+document.getElementById("welcome").innerText = "أهلاً " + user.full_name + " — " + user.grade;
+
+if(user.role === "superadmin"){
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
 
 async function loadCourses(){
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("courses")
     .select("*")
     .eq("grade", user.grade)
     .eq("is_active", true);
 
+  if(error){ alert(error.message); return; }
+
   const container = document.getElementById("courses");
   container.innerHTML="";
+
+  if(!data || data.length===0){
+    container.innerHTML = `<div class="card"><h3>لا يوجد كورسات</h3><div class="meta">لسه مفيش كورسات اتضافت للسنة دي.</div></div>`;
+    return;
+  }
 
   data.forEach(c=>{
     const div = document.createElement("div");
     div.className="card";
     div.innerHTML=`
-      <h3>${c.title}</h3>
-      <div>المادة: ${c.subject}</div>
-      <div>المدرس: ${c.teacher_name}</div>
-      <div>السعر: ${c.price} جنيه</div>
+      <h3>${esc(c.title)}</h3>
+      <div class="meta">
+        المادة: <b>${esc(c.subject)}</b><br>
+        المدرس: <b>${esc(c.teacher_name)}</b><br>
+        السعر: <b>${esc(c.price)}</b> جنيه
+      </div>
       <button onclick='selectCourse(${JSON.stringify(c)})'>اختيار الكورس</button>
     `;
     container.appendChild(div);
@@ -184,6 +195,8 @@ window.logout=function(){
   localStorage.removeItem("mf_user");
   location.href="login.html";
 }
+
+function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
 
 loadCourses();
 </script>
