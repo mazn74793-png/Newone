@@ -1,177 +1,239 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Make Future | Login</title>
-
-<style>
-
-body{
-margin:0;
-font-family:system-ui;
-background:#0b1020;
-color:#fff;
-display:flex;
-align-items:center;
-justify-content:center;
-min-height:100vh;
-}
-
-.card{
-background:#12172e;
-padding:30px;
-border-radius:15px;
-width:420px;
-box-shadow:0 0 30px rgba(0,0,0,.5);
-}
-
-input{
-width:100%;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-border:none;
-background:#1a2040;
-color:#fff;
-}
-
-button{
-margin-top:15px;
-padding:10px;
-width:100%;
-border:none;
-border-radius:10px;
-background:#5a6cff;
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-button:hover{
-background:#7887ff;
-}
-
-.status{
-margin-top:10px;
-font-size:14px;
-opacity:.8;
-}
-
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Login</title>
+  <style>
+    :root{color-scheme:dark}
+    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;display:grid;place-items:center;padding:20px}
+    .card{width:min(980px,100%);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px}
+    input,select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
+    button,a{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
+    button:hover,a:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .muted{opacity:.82;font-size:13px;line-height:1.6}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
+    .hr{height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,.14),transparent);margin:12px 0}
+    .status{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.25);font-size:13px;line-height:1.6}
+    code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12px}
+  </style>
 </head>
-
 <body>
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div class="row">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-size:18px;font-weight:900">تسجيل / دخول</div>
+          <div class="muted">Supabase Auth + Trigger + RLS ✅ (موبايل + باسورد)</div>
+        </div>
+      </div>
+      <div class="row">
+        <a href="index.html">الرئيسية</a>
+        <a href="student.html">صفحة الطالب</a>
+        <a href="admin.html">لوحة الأدمن</a>
+      </div>
+    </div>
 
-<div class="card">
+    <div class="grid">
+      <!-- SIGNUP -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Sign up (طالب)</div>
+        <div class="muted" style="margin-top:6px">
+          بنحوّل رقم الموبايل لإيميل داخلي: <code>01xxxxxxxxx@makefuture.com</code>
+        </div>
 
-<h2>تسجيل طالب جديد</h2>
+        <div style="margin-top:10px">
+          <div class="muted">الاسم</div>
+          <input id="su_full_name" placeholder="اسم الطالب" autocomplete="name" />
+        </div>
 
-<input id="name" placeholder="اسم الطالب">
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب</div>
+          <input id="su_phone_student" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
 
-<input id="phone" placeholder="موبايل الطالب">
+        <div style="margin-top:10px">
+          <div class="muted">موبايل ولي الأمر</div>
+          <input id="su_phone_parent" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
 
-<input id="parent" placeholder="موبايل ولي الامر">
+        <div style="margin-top:10px">
+          <div class="muted">السنة</div>
+          <select id="su_grade">
+            <option value="3prep">3 إعدادي</option>
+            <option value="1sec">1 ثانوي</option>
+            <option value="2sec">2 ثانوي</option>
+            <option value="3sec">3 ثانوي</option>
+          </select>
+        </div>
 
-<input id="password" type="password" placeholder="كلمة المرور">
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="su_password" type="password" placeholder="••••••••" autocomplete="new-password" />
+        </div>
 
-<button onclick="signup()">تسجيل</button>
+        <div class="row" style="margin-top:12px">
+          <button type="button" id="btnSignup">تسجيل</button>
+          <button type="button" id="btnDemo" style="opacity:.85">بيانات تجريبية</button>
+        </div>
 
-<div class="status" id="status"></div>
+        <div class="muted" style="margin-top:10px">
+          ⚠️ لو واقف عندك Session بعد SignUp: اقفل Confirm Email مؤقتًا
+        </div>
 
-<hr style="margin:20px 0">
+        <div id="su_status" class="status">جاهز للتسجيل…</div>
+      </div>
 
-<h2>تسجيل الدخول</h2>
+      <!-- LOGIN -->
+      <div class="box">
+        <div style="font-weight:900;font-size:16px">Login</div>
 
-<input id="loginPhone" placeholder="موبايل الطالب">
+        <div style="margin-top:10px">
+          <div class="muted">موبايل الطالب</div>
+          <input id="li_phone" placeholder="01xxxxxxxxx" inputmode="numeric" />
+        </div>
 
-<input id="loginPass" type="password" placeholder="كلمة المرور">
+        <div style="margin-top:10px">
+          <div class="muted">Password</div>
+          <input id="li_password" type="password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
 
-<button onclick="login()">دخول</button>
+        <div class="row" style="margin-top:12px">
+          <button type="button" id="btnLogin">دخول</button>
+          <button type="button" id="btnLogout" style="opacity:.85">خروج</button>
+        </div>
 
-<div class="status" id="loginStatus"></div>
+        <div class="hr"></div>
 
-</div>
+        <div id="li_status" class="status">جاهز للدخول…</div>
+      </div>
+    </div>
+  </div>
 
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-<script type="module">
+    const supabase = createClient(
+      "https://anlstahxxpbbfnwrwulu.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFubHN0YWh4eHBiYmZud3J3dWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDQzMTIsImV4cCI6MjA4ODEyMDMxMn0.4RQxQ4AZZCVCswTRdJoZ7Jz9qNwQq0fPs7vitnMJ3A4"
+    );
 
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    const suStatus = document.getElementById("su_status");
+    const liStatus = document.getElementById("li_status");
+    const setStatus = (el, msg) => (el.textContent = msg);
 
-const supabase = createClient(
-"https://anlstahxxpbbfnwrwulu.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFubHN0YWh4eHBiYmZud3J3dWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDQzMTIsImV4cCI6MjA4ODEyMDMxMn0.4RQxQ4AZZCVCswTRdJoZ7Jz9qNwQq0fPs7vitnMJ3A4"
-)
+    function phoneToEmail(phone){
+      const clean = String(phone||"").replace(/\D/g,"");
+      return `${clean}@makefuture.com`; // ✅ not .local
+    }
+    function isPhoneOk(p){
+      const clean = String(p||"").replace(/\D/g,"");
+      return clean.length >= 10;
+    }
 
-function phoneToEmail(phone){
+    document.getElementById("btnDemo").addEventListener("click", ()=>{
+      document.getElementById("su_full_name").value = "طالب تجريبي";
+      document.getElementById("su_phone_student").value = "01000000000";
+      document.getElementById("su_phone_parent").value = "01100000000";
+      document.getElementById("su_grade").value = "3prep";
+      document.getElementById("su_password").value = "12345678";
+      setStatus(suStatus, "تم ملء بيانات تجريبية.");
+    });
 
-const clean = String(phone).replace(/\D/g,"")
+    document.getElementById("btnSignup").addEventListener("click", async ()=>{
+      try{
+        setStatus(suStatus, "جارٍ التسجيل…");
 
-return clean + "@makefuture.com"
+        const full_name = document.getElementById("su_full_name").value.trim();
+        const phone_student = document.getElementById("su_phone_student").value.trim();
+        const phone_parent = document.getElementById("su_phone_parent").value.trim();
+        const grade = document.getElementById("su_grade").value;
+        const password = document.getElementById("su_password").value.trim();
 
-}
+        if(!full_name || !phone_student || !phone_parent || !grade || !password){
+          setStatus(suStatus, "املأ البيانات المطلوبة.");
+          return;
+        }
+        if(!isPhoneOk(phone_student) || !isPhoneOk(phone_parent)){
+          setStatus(suStatus, "اكتب أرقام موبايل صحيحة.");
+          return;
+        }
+        if(password.length < 6){
+          setStatus(suStatus, "الباسورد لازم 6 أحرف/أرقام على الأقل.");
+          return;
+        }
 
+        const email = phoneToEmail(phone_student);
 
-window.signup = async function(){
+        // ✅ IMPORTANT: send metadata so trigger can fill profiles
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name,
+              grade,
+              phone_student,
+              phone_parent
+            }
+          }
+        });
 
-const name = document.getElementById("name").value
-const phone = document.getElementById("phone").value
-const parent = document.getElementById("parent").value
-const pass = document.getElementById("password").value
+        if(error){
+          setStatus(suStatus, "Signup error: " + error.message);
+          return;
+        }
 
-const email = phoneToEmail(phone)
+        // لو Confirm Email OFF هيبقى فيه session فورًا
+        const { data: sess } = await supabase.auth.getSession();
+        if(!sess?.session){
+          setStatus(suStatus, "تم التسجيل ✅ (لو Confirm Email شغال، فعّلته/اقفله مؤقتًا) ثم اعمل Login.");
+          return;
+        }
 
-const {data,error} = await supabase.auth.signUp({
-email:email,
-password:pass
-})
+        setStatus(suStatus, "تم التسجيل ✅ هتتحول لصفحة الطالب…");
+        location.href = "student.html";
+      } catch(e){
+        setStatus(suStatus, "Unexpected error: " + (e?.message || e));
+      }
+    });
 
-if(error){
-document.getElementById("status").innerText = error.message
-return
-}
+    document.getElementById("btnLogin").addEventListener("click", async ()=>{
+      try{
+        setStatus(liStatus, "جارٍ تسجيل الدخول…");
 
-await supabase.from("profiles").insert({
-id:data.user.id,
-full_name:name,
-phone_student:phone,
-phone_parent:parent
-})
+        const phone = document.getElementById("li_phone").value.trim();
+        const password = document.getElementById("li_password").value.trim();
 
-document.getElementById("status").innerText="تم التسجيل بنجاح"
+        if(!phone || !password){
+          setStatus(liStatus, "اكتب رقم الموبايل والباسورد.");
+          return;
+        }
 
-location.href="student.html"
+        const email = phoneToEmail(phone);
 
-}
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if(error){
+          setStatus(liStatus, "Login error: " + error.message);
+          return;
+        }
 
+        setStatus(liStatus, "تم تسجيل الدخول ✅ هتتحول لصفحة الطالب…");
+        location.href = "student.html";
+      } catch(e){
+        setStatus(liStatus, "Unexpected error: " + (e?.message || e));
+      }
+    });
 
-
-window.login = async function(){
-
-const phone = document.getElementById("loginPhone").value
-const pass = document.getElementById("loginPass").value
-
-const email = phoneToEmail(phone)
-
-const {error} = await supabase.auth.signInWithPassword({
-email:email,
-password:pass
-})
-
-if(error){
-document.getElementById("loginStatus").innerText = error.message
-return
-}
-
-document.getElementById("loginStatus").innerText="تم تسجيل الدخول"
-
-location.href="student.html"
-
-}
-
-</script>
-
-
+    document.getElementById("btnLogout").addEventListener("click", async ()=>{
+      await supabase.auth.signOut();
+      setStatus(liStatus, "تم تسجيل الخروج.");
+    });
+  </script>
 </body>
 </html>
