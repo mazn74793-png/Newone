@@ -86,7 +86,7 @@
         .select("id,grade,supject,title,teacher_name,price,is_active,created_at")
         .eq("grade", me.grade)
         .eq("is_active", true)
-        .order("id", { ascending:false });
+        .order("created_at", { ascending:false });
 
       if(error){ alert(error.message); return; }
 
@@ -99,22 +99,18 @@
       }
 
       for(const c of data){
-        // load schedules for each course
-        const { data: sch, error: schErr } = await supabase
+        const { data: sch } = await supabase
           .from("schedules")
           .select("id,day_of_week,start_time,end_time,notes")
           .eq("course_id", c.id)
           .order("id", { ascending:false });
 
-        if(schErr){ /* نخليها تعدي */ }
-
-        const div = document.createElement("div");
-        div.className = "card";
-
         const schHtml = (!sch || sch.length===0)
           ? `<div class="muted">مواعيد الكورس لسه مش متسجلة.</div>`
           : `<div class="pill">${sch.map(s=>`<span class="tag">${esc(s.day_of_week)} • ${esc(s.start_time)} - ${esc(s.end_time)}</span>`).join("")}</div>`;
 
+        const div = document.createElement("div");
+        div.className = "card";
         div.innerHTML = `
           <h3>${esc(c.title)}</h3>
           <div class="meta">
@@ -128,10 +124,10 @@
             ${schHtml}
           </div>
 
-          <button class="btn primary" style="width:100%;margin-top:12px" data-pick="${c.id}">اختيار الكورس والدفع</button>
+          <button class="btn primary" style="width:100%;margin-top:12px">اختيار الكورس والدفع</button>
         `;
 
-        div.querySelector("[data-pick]").onclick = ()=>{
+        div.querySelector("button").onclick = ()=>{
           localStorage.setItem("mf_selected_course", JSON.stringify(c));
           location.href = "payment.html";
         };
