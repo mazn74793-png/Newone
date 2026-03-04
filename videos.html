@@ -1,288 +1,108 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Make Future | Videos</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Videos</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./theme.css" />
+  <script src="./theme.js" defer></script>
 
-<style>
-:root{
-  --bg1:#0f172a; --bg2:#111827;
-  --card:rgba(255,255,255,.06);
-  --line:rgba(255,255,255,.10);
-  --text:#f1f5f9;
-  --muted:rgba(241,245,249,.75);
-  --accent:#7c3aed; --accent2:#06b6d4;
-}
-[data-theme="light"]{
-  --bg1:#f8fafc; --bg2:#eef2ff;
-  --card:rgba(255,255,255,.75);
-  --line:rgba(15,23,42,.12);
-  --text:#0f172a;
-  --muted:rgba(15,23,42,.65);
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'Cairo',sans-serif;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2));
-  color:var(--text);
-  min-height:100vh;
-}
-
-/* Navbar */
-.nav{
-  position:sticky;top:0;z-index:10;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:14px 18px;
-  background:rgba(0,0,0,.22);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line);
-}
-[data-theme="light"] .nav{background:rgba(255,255,255,.55)}
-.logo{
-  font-weight:900;font-size:20px;
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-.actions{display:flex;gap:10px;flex-wrap:wrap}
-.btn{
-  cursor:pointer;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  padding:9px 14px;border-radius:14px;
-  font-weight:900;
-  transition:.25s;
-}
-.btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.12)}
-.btn.primary{background:linear-gradient(45deg,var(--accent),var(--accent2));border:none;color:#fff}
-
-/* Layout */
-.container{padding:18px;max-width:1100px;margin:auto}
-.status{
-  background:var(--card);
-  border:1px solid var(--line);
-  padding:14px;border-radius:18px;
-  margin-bottom:14px;
-}
-.muted{color:var(--muted);font-size:13px;line-height:1.7}
-
-.grid{
-  display:grid;gap:12px;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:20px;
-  padding:14px;
-  transition:.25s;
-  transform:translateY(8px);
-  opacity:0;
-}
-.card.show{transform:translateY(0);opacity:1}
-.card:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,.22)}
-.card h3{margin:0 0 8px;font-size:16px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-
-/* Modal Player */
-.modal{
-  position:fixed; inset:0;
-  background:rgba(0,0,0,.65);
-  display:none;
-  align-items:center; justify-content:center;
-  padding:18px;
-  z-index:50;
-}
-.modal.open{display:flex}
-.modalBox{
-  width:min(980px,100%);
-  background:linear-gradient(135deg,var(--bg1),var(--bg2));
-  border:1px solid var(--line);
-  border-radius:20px;
-  overflow:hidden;
-}
-.modalHead{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
-}
-.modalTitle{font-weight:900}
-.iframeWrap{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:#000;
-}
-.iframeWrap iframe{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  border:0;
-}
-</style>
+  <style>
+    body{margin:0;min-height:100vh}
+    .wrap{max-width:980px;margin:auto;padding:18px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
+    .btn{cursor:pointer;border:1px solid var(--border);background:var(--btn);color:var(--text);padding:10px 12px;border-radius:12px;font-weight:900;text-decoration:none}
+    .card{margin-top:14px;border:1px solid var(--border);background:var(--card);border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+    .muted{opacity:.82;font-size:13px;line-height:1.7}
+    .list{display:grid;gap:10px;margin-top:12px}
+    .item{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--border);background:rgba(0,0,0,.10);border-radius:14px;padding:12px}
+    .pill{font-size:12px;opacity:.9;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;background:rgba(0,0,0,.12)}
+  </style>
 </head>
 
 <body>
-
-<div class="nav">
-  <div class="logo">Make Future</div>
-  <div class="actions">
-    <button class="btn" id="themeBtn">🌙 / ☀️</button>
-    <button class="btn" onclick="location.href='student.html'">رجوع</button>
-    <button class="btn" onclick="logout()">خروج</button>
-  </div>
-</div>
-
-<div class="container">
-  <div id="statusBox" class="status">جاري التحقق من حالة الدفع...</div>
-  <div class="grid" id="videos"></div>
-</div>
-
-<!-- Player Modal -->
-<div class="modal" id="modal" onclick="closeModal(event)">
-  <div class="modalBox" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <div class="modalTitle" id="modalTitle">مشغل الفيديو</div>
-      <button class="btn" onclick="forceClose()">✖</button>
-    </div>
-    <div class="iframeWrap">
-      <iframe id="player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>
-
-<script type="module">
-import { supabase } from "./supabase-client.js";
-
-/* Theme */
-const savedTheme = localStorage.getItem("mf_theme") || "dark";
-document.documentElement.setAttribute("data-theme", savedTheme);
-document.getElementById("themeBtn").onclick = ()=>{
-  const cur = document.documentElement.getAttribute("data-theme") || "dark";
-  const next = cur === "dark" ? "light" : "dark";
-  document.documentElement.setAttribute("data-theme", next);
-  localStorage.setItem("mf_theme", next);
-};
-
-const user = JSON.parse(localStorage.getItem("mf_user") || "null");
-if(!user) location.href="login.html";
-
-window.logout=function(){
-  localStorage.removeItem("mf_user");
-  location.href="login.html";
-};
-
-function ytEmbed(url){
-  // يدعم روابط watch و youtu.be و embed
-  try{
-    const u = new URL(url);
-    let id = "";
-    if(u.hostname.includes("youtu.be")) id = u.pathname.replace("/","");
-    else if(u.searchParams.get("v")) id = u.searchParams.get("v");
-    else if(u.pathname.includes("/embed/")) id = u.pathname.split("/embed/")[1];
-    if(!id) return null;
-    return "https://www.youtube.com/embed/" + id + "?autoplay=1&rel=0";
-  }catch(e){ return null; }
-}
-
-const modal = document.getElementById("modal");
-const player = document.getElementById("player");
-const modalTitle = document.getElementById("modalTitle");
-
-window.openVideo = function(title, url){
-  const embed = ytEmbed(url);
-  if(!embed){
-    alert("اللينك مش يوتيوب صالح. لو فيديو خارجي هنظبطه في خطوة (Hosting/Storage).");
-    return;
-  }
-  modalTitle.textContent = title;
-  player.src = embed;
-  modal.classList.add("open");
-};
-
-window.forceClose = function(){
-  player.src = "";
-  modal.classList.remove("open");
-};
-
-window.closeModal = function(e){
-  // لو ضغط على الخلفية
-  if(e.target === modal) forceClose();
-};
-
-async function getApprovedSubject(){
-  // لو الطالب عنده كورسات Approved، هنفتح الفيديوهات للمادة دي
-  const { data, error } = await supabase
-    .from("payments")
-    .select("status, courses(subject)")
-    .eq("user_id", user.id)
-    .eq("status", "approved")
-    .order("id", { ascending:false });
-
-  if(error){ alert(error.message); return null; }
-
-  if(!data || data.length===0){
-    document.getElementById("statusBox").innerHTML =
-      "<b>❌ لسه مفيش موافقة على الدفع.</b><br><span class='muted'>استنى موافقة الأدمن وبعدها الفيديوهات هتظهر هنا.</span>";
-    return null;
-  }
-
-  document.getElementById("statusBox").innerHTML =
-    "<b>✅ الدفع متوافق عليه.</b><br><span class='muted'>اختار فيديو وشغّله من جوّه الموقع.</span>";
-
-  return data[0]?.courses?.subject || null;
-}
-
-async function loadVideos(subject){
-  const { data, error } = await supabase
-    .from("video_library")
-    .select("*")
-    .eq("grade", user.grade)
-    .eq("subject", subject)
-    .eq("is_active", true)
-    .order("order_index", { ascending:true });
-
-  if(error){ alert(error.message); return; }
-
-  const container = document.getElementById("videos");
-  container.innerHTML = "";
-
-  if(!data || data.length===0){
-    container.innerHTML = `<div class="card show"><h3>لا يوجد فيديوهات حالياً</h3><div class="muted">الأدمن لسه ماضافش فيديوهات للمادة دي.</div></div>`;
-    return;
-  }
-
-  data.forEach((v, i)=>{
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <div class="row">
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">MF</div>
         <div>
-          <h3>${escapeHtml(v.title)}</h3>
-          <div class="muted">ترتيب: <b>${v.order_index}</b> • ${escapeHtml(v.grade)} / ${escapeHtml(v.subject)}</div>
+          <div style="font-weight:900;font-size:18px">الفيديوهات</div>
+          <div class="muted" id="head">...</div>
         </div>
       </div>
-      <button class="btn primary" onclick="openVideo('${jsStr(v.title)}','${jsStr(v.youtube_url)}')">▶ تشغيل داخل الموقع</button>
-    `;
-    container.appendChild(div);
-    // animation stagger
-    setTimeout(()=>div.classList.add("show"), 60*i);
-  });
-}
+      <a class="btn" href="student.html">رجوع</a>
+    </div>
 
-function escapeHtml(s){
-  return String(s??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;");
-}
-function jsStr(s){ return String(s??"").replaceAll("\\","\\\\").replaceAll("'","\\'"); }
+    <div class="card">
+      <div style="font-weight:900">مكتبة الفيديو</div>
+      <div class="muted">المحتوى بيظهر حسب السنة + المادة (من الكورس المختار أو أول كورس متاح).</div>
+      <div class="list" id="list"></div>
+    </div>
+  </div>
 
-const subject = await getApprovedSubject();
-if(subject) loadVideos(subject);
-</script>
+  <script type="module">
+    import { supabase } from "./supabase-client.js";
 
+    const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+    if(!me) location.href="login.html";
+
+    const list = document.getElementById("list");
+    const head = document.getElementById("head");
+
+    function esc(s){ return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+    // نحدد المادة من كورس مختار، ولو مش موجود نجيب أول كورس Active للسنة
+    let chosen = JSON.parse(localStorage.getItem("mf_selected_course") || "null");
+
+    if(!chosen){
+      const { data } = await supabase
+        .from("courses")
+        .select("id,grade,supject,title,is_active")
+        .eq("grade", me.grade)
+        .eq("is_active", true)
+        .order("id", { ascending:false })
+        .limit(1);
+      chosen = data?.[0] || null;
+    }
+
+    if(!chosen){
+      head.textContent = `${me.grade} • مفيش كورسات لسه`;
+      list.innerHTML = `<div class="muted" style="margin-top:10px">مفيش فيديوهات لأن مفيش كورسات للسنة دي.</div>`;
+    }else{
+      const supject = chosen.supject ?? chosen.subject ?? "";
+      head.textContent = `${me.grade} • ${supject}`;
+
+      const { data, error } = await supabase
+        .from("video_library")
+        .select("id,title,youtube_url,order_index,is_active,grade,supject")
+        .eq("grade", chosen.grade)
+        .eq("supject", supject)
+        .eq("is_active", true)
+        .order("order_index", { ascending:true });
+
+      if(error){
+        list.innerHTML = `<div class="muted" style="margin-top:10px">خطأ: ${esc(error.message)}</div>`;
+      }else if(!data || data.length===0){
+        list.innerHTML = `<div class="muted" style="margin-top:10px">مفيش فيديوهات Active للمادة دي لسه.</div>`;
+      }else{
+        list.innerHTML = "";
+        data.forEach(v=>{
+          const row = document.createElement("div");
+          row.className="item";
+          row.innerHTML = `
+            <div>
+              <div style="font-weight:900">${esc(v.title)}</div>
+              <div class="muted">ترتيب: <span class="pill">${esc(v.order_index)}</span></div>
+            </div>
+            <a class="btn" href="${esc(v.youtube_url)}" target="_blank" rel="noreferrer">فتح</a>
+          `;
+          list.appendChild(row);
+        });
+      }
+    }
+  </script>
 </body>
 </html>
