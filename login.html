@@ -30,6 +30,7 @@
     .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     @media(max-width:600px){.split{grid-template-columns:1fr}}
     a{color:var(--link);text-decoration:none;font-weight:800}
+    .small{font-size:12px;opacity:.85;margin-top:8px}
   </style>
 </head>
 
@@ -40,7 +41,7 @@
         <div class="logo">MF</div>
         <div>
           <h1>Make Future</h1>
-          <div class="muted">تسجيل + دخول حقيقي (موبايل + باسورد)</div>
+          <div class="muted">تسجيل + دخول (موبايل + باسورد) — نسخة نهائية</div>
         </div>
       </div>
 
@@ -79,7 +80,7 @@
         </div>
 
         <label>باسورد</label>
-        <input id="passSignup" type="password" placeholder="••••••••" />
+        <input id="passSignup" type="password" placeholder="•••••••• (6+)" />
 
         <div class="row" style="margin-top:12px">
           <button class="btn primary" id="btnSignup" type="button">تسجيل</button>
@@ -87,6 +88,9 @@
         </div>
 
         <div class="toast" id="toastSignup"></div>
+        <div class="small muted">
+          * بنحوّل رقم الموبايل لإيميل داخلي بالشكل: <b>01xxxxxxxxx@makefuture.local</b>
+        </div>
       </div>
 
       <!-- LOGIN -->
@@ -111,10 +115,11 @@
     </div>
 
     <div class="panel">
-      <div style="font-weight:900;margin-bottom:6px">ملاحظات</div>
+      <div style="font-weight:900;margin-bottom:6px">ليه الكود ده “صح”؟</div>
       <div class="muted">
-        • الحل النهائي لمشكلة bigint: بنجيب المستخدم من جدول <b>users</b> بالموبايل، مش بـ auth.uid.<br/>
-        • لو ظهر Rate limit ده من Supabase Auth—جرب بعد دقيقة.<br/>
+        • لأننا <b>مش بنستخدم auth.uid</b> في جدول users إطلاقًا.<br/>
+        • بعد الـ Login بنعمل select من <b>users</b> عن طريق <b>phone_student</b>، وبكده `me.id` يبقى bigint مضبوط.<br/>
+        • ده يمنع خطأ: <b>invalid input syntax for type bigint: "uuid"</b>.
       </div>
     </div>
   </div>
@@ -160,7 +165,8 @@
 
       const email = phoneToEmail(phone_student);
 
-      const { data, error } = await supabase.auth.signUp({
+      // 1) signUp في Auth
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { full_name, phone_student, phone_parent, grade } }
@@ -171,15 +177,24 @@
         return;
       }
 
-      // ✅ نضمن صف users يتعمل (id = bigint auto)
-      // لو عندك Trigger بيعمله، الإدخال ده ممكن يفشل بـ duplicate — عادي.
-      try{
-        await supabase.from("users").insert([{
-          full_name, phone_student, phone_parent, grade, role: "student"
-        }]);
-      }catch(_e){}
+      // 2) نضمن صف users (id bigint auto)
+      // لو عندك Trigger بيعمله، ده ممكن يفشل بـ duplicate - مش مشكلة.
+      const { error: insErr } = await supabase.from("users").insert([{
+        full_name,
+        phone_student,
+        phone_parent,
+        grade,
+        role: "student"
+      }]);
 
-      toast(t, "تم التسجيل ✅ دلوقتي اعمل Login.", true);
+      // لو duplicate أو RLS منعها، مش هنوقف التسجيل — بس هنقولك
+      if(insErr){
+        console.warn("users insert:", insErr.message);
+      }
+
+      toast(t, "تم التسجيل ✅ دلوقتي افتح تبويب تسجيل الدخول واعمل Login.", true);
+
+      // تجهيز لوجين سريع
       tabLogin.click();
       document.getElementById("phoneLogin").value = phone_student;
       document.getElementById("passLogin").value = password;
@@ -192,247 +207,40 @@
 
       const phone = cleanPhone(document.getElementById("phoneLogin").value);
       const password = document.getElementById("passLogin").value;
-      if(!phone || !password){ toast(t, "اكتب الموبايل والباسورد.", false); return; }
-
-      const email = phoneToEmail(phone);
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if(error){ toast(t, `Login error: ${error.message}`, false); return; }
-
-      // ✅ IMPORTANT: users.id bigint -> نجيب user بالهاتف
-      const { data: u, error: uerr } = await supabase
-        .from("users")
-        .select("id,full_name,phone_student,phone_parent,grade,role,created_at")
-        .eq("phone_student", phone)
-        .maybeSingle();
-
-      if(uerr){ toast(t, `DB error: ${uerr.message}`, false); return; }
-      if(!u){ toast(t, "المستخدم موجود في Auth لكن مش موجود في users. راجع Trigger/Insert.", false); return; }
-
-      localStorage.setItem("mf_user", JSON.stringify(u));
-      toast(t, "تم الدخول ✅", true);
-      location.href = "student.html";
-    };
-
-    document.getElementById("btnLogout").onclick = async ()=>{
-      await supabase.auth.signOut();
-      localStorage.removeItem("mf_user");
-      localStorage.removeItem("mf_selected_course");
-      alert("تم الخروج ✅");
-    };
-  </script>
-</body>
-</html><!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make Future | Login</title>
-
-  <link rel="stylesheet" href="./theme.css" />
-  <script src="./theme.js" defer></script>
-
-  <style>
-    body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px}
-    .wrap{width:min(980px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:18px}
-    @media(max-width:900px){.wrap{grid-template-columns:1fr}}
-    .panel{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,.25);padding:18px}
-    .brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
-    h1{margin:0;font-size:20px}
-    .muted{opacity:.8;font-size:13px;line-height:1.7}
-    label{display:block;font-size:12px;opacity:.85;margin:10px 0 6px}
-    input,select{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);outline:none}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{cursor:pointer;border:1px solid var(--border);background:var(--btn);color:var(--text);padding:11px 14px;border-radius:12px;font-weight:800}
-    .primary{background:linear-gradient(45deg,var(--accent),var(--accent2));border:none;color:#fff}
-    .danger{background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.25)}
-    .toast{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.15);font-size:13px;display:none}
-    .tabs{display:flex;gap:8px;margin:12px 0}
-    .tab{padding:9px 12px;border-radius:12px;border:1px solid var(--border);background:var(--btn);cursor:pointer;font-weight:800;font-size:13px}
-    .tab.active{outline:2px solid rgba(124,58,237,.35)}
-    .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    @media(max-width:600px){.split{grid-template-columns:1fr}}
-    a{color:var(--link);text-decoration:none;font-weight:800}
-  </style>
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="panel">
-      <div class="brand">
-        <div class="logo">MF</div>
-        <div>
-          <h1>Make Future</h1>
-          <div class="muted">تسجيل + دخول حقيقي (موبايل + باسورد)</div>
-        </div>
-      </div>
-
-      <div class="tabs">
-        <button class="tab active" id="tabSignup" type="button">تسجيل طالب جديد</button>
-        <button class="tab" id="tabLogin" type="button">تسجيل الدخول</button>
-      </div>
-
-      <!-- SIGNUP -->
-      <div id="signupBox">
-        <div class="split">
-          <div>
-            <label>الاسم</label>
-            <input id="fullName" placeholder="مثال: أحمد محمد" />
-          </div>
-          <div>
-            <label>السنة</label>
-            <select id="grade">
-              <option value="3 إعدادي">3 إعدادي</option>
-              <option value="1 ثانوي">1 ثانوي</option>
-              <option value="2 ثانوي">2 ثانوي</option>
-              <option value="3 ثانوي">3 ثانوي</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="split">
-          <div>
-            <label>موبايل الطالب</label>
-            <input id="phoneStudent" inputmode="numeric" placeholder="01xxxxxxxxx" />
-          </div>
-          <div>
-            <label>موبايل ولي الأمر</label>
-            <input id="phoneParent" inputmode="numeric" placeholder="01xxxxxxxxx" />
-          </div>
-        </div>
-
-        <label>باسورد</label>
-        <input id="passSignup" type="password" placeholder="••••••••" />
-
-        <div class="row" style="margin-top:12px">
-          <button class="btn primary" id="btnSignup" type="button">تسجيل</button>
-          <a class="btn" href="./index.html">الرئيسية</a>
-        </div>
-
-        <div class="toast" id="toastSignup"></div>
-      </div>
-
-      <!-- LOGIN -->
-      <div id="loginBox" style="display:none">
-        <label>موبايل الطالب</label>
-        <input id="phoneLogin" inputmode="numeric" placeholder="01xxxxxxxxx" />
-
-        <label>باسورد</label>
-        <input id="passLogin" type="password" placeholder="••••••••" />
-
-        <div class="row" style="margin-top:12px">
-          <button class="btn primary" id="btnLogin" type="button">دخول</button>
-          <button class="btn danger" id="btnLogout" type="button">خروج</button>
-        </div>
-
-        <div class="toast" id="toastLogin"></div>
-      </div>
-
-      <div class="muted" style="margin-top:12px">
-        دعم: <b>01210575530</b> أو <b>01006693681</b> — قباء/جسر السويس
-      </div>
-    </div>
-
-    <div class="panel">
-      <div style="font-weight:900;margin-bottom:6px">ملاحظات</div>
-      <div class="muted">
-        • الحل النهائي لمشكلة bigint: بنجيب المستخدم من جدول <b>users</b> بالموبايل، مش بـ auth.uid.<br/>
-        • لو ظهر Rate limit ده من Supabase Auth—جرب بعد دقيقة.<br/>
-      </div>
-    </div>
-  </div>
-
-  <script type="module">
-    import { supabase, phoneToEmail, cleanPhone } from "./supabase-client.js";
-
-    const tabSignup = document.getElementById("tabSignup");
-    const tabLogin = document.getElementById("tabLogin");
-    const signupBox = document.getElementById("signupBox");
-    const loginBox = document.getElementById("loginBox");
-
-    function toast(el, msg, ok=true){
-      el.style.display = "block";
-      el.textContent = msg;
-      el.style.borderColor = ok ? "rgba(80,255,160,.25)" : "rgba(255,80,80,.25)";
-    }
-
-    tabSignup.onclick = ()=>{
-      tabSignup.classList.add("active"); tabLogin.classList.remove("active");
-      signupBox.style.display="block"; loginBox.style.display="none";
-    };
-    tabLogin.onclick = ()=>{
-      tabLogin.classList.add("active"); tabSignup.classList.remove("active");
-      signupBox.style.display="none"; loginBox.style.display="block";
-    };
-
-    // SIGNUP
-    document.getElementById("btnSignup").onclick = async ()=>{
-      const t = document.getElementById("toastSignup");
-      t.style.display="none";
-
-      const full_name = document.getElementById("fullName").value.trim();
-      const grade = document.getElementById("grade").value;
-      const phone_student = cleanPhone(document.getElementById("phoneStudent").value);
-      const phone_parent = cleanPhone(document.getElementById("phoneParent").value);
-      const password = document.getElementById("passSignup").value;
-
-      if(!full_name || !phone_student || password.length < 6){
-        toast(t, "اكتب الاسم + موبايل الطالب + باسورد 6 حروف على الأقل.", false);
+      if(!phone || !password){
+        toast(t, "اكتب الموبايل والباسورد.", false);
         return;
       }
 
-      const email = phoneToEmail(phone_student);
+      const email = phoneToEmail(phone);
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { full_name, phone_student, phone_parent, grade } }
-      });
-
+      // 1) Login Auth
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
       if(error){
-        toast(t, `Signup error: ${error.message}`, false);
+        toast(t, `Login error: ${error.message}`, false);
         return;
       }
 
-      // ✅ نضمن صف users يتعمل (id = bigint auto)
-      // لو عندك Trigger بيعمله، الإدخال ده ممكن يفشل بـ duplicate — عادي.
-      try{
-        await supabase.from("users").insert([{
-          full_name, phone_student, phone_parent, grade, role: "student"
-        }]);
-      }catch(_e){}
-
-      toast(t, "تم التسجيل ✅ دلوقتي اعمل Login.", true);
-      tabLogin.click();
-      document.getElementById("phoneLogin").value = phone_student;
-      document.getElementById("passLogin").value = password;
-    };
-
-    // LOGIN
-    document.getElementById("btnLogin").onclick = async ()=>{
-      const t = document.getElementById("toastLogin");
-      t.style.display="none";
-
-      const phone = cleanPhone(document.getElementById("phoneLogin").value);
-      const password = document.getElementById("passLogin").value;
-      if(!phone || !password){ toast(t, "اكتب الموبايل والباسورد.", false); return; }
-
-      const email = phoneToEmail(phone);
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if(error){ toast(t, `Login error: ${error.message}`, false); return; }
-
-      // ✅ IMPORTANT: users.id bigint -> نجيب user بالهاتف
+      // 2) ✅ أهم سطر: نجيب user من public.users بالموبايل (مش auth.uid)
       const { data: u, error: uerr } = await supabase
         .from("users")
         .select("id,full_name,phone_student,phone_parent,grade,role,created_at")
         .eq("phone_student", phone)
         .maybeSingle();
 
-      if(uerr){ toast(t, `DB error: ${uerr.message}`, false); return; }
-      if(!u){ toast(t, "المستخدم موجود في Auth لكن مش موجود في users. راجع Trigger/Insert.", false); return; }
+      if(uerr){
+        toast(t, `DB error: ${uerr.message}`, false);
+        return;
+      }
+      if(!u){
+        toast(t, "أنت دخلت Auth بس صف users مش موجود. (محتاج Trigger أو insert users يتسمح).", false);
+        return;
+      }
 
+      // ✅ هنا me.id هيبقى bigint
       localStorage.setItem("mf_user", JSON.stringify(u));
       toast(t, "تم الدخول ✅", true);
+
       location.href = "student.html";
     };
 
