@@ -5,95 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Make Future | Payment</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./theme.css" />
+  <script src="./theme.js" defer></script>
 
   <style>
-    :root{color-scheme:dark}
-    body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0f172a,#111827);color:#e8ecff;min-height:100vh;padding:20px}
-    .card{max-width:900px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 10px 40px rgba(0,0,0,.35)}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#06b6d4);display:grid;place-items:center;font-weight:900}
-    a,button{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
-    .primary{background:linear-gradient(45deg,#7c3aed,#06b6d4);border:none}
-    .box{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px;margin-top:12px}
-    select,input{width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;outline:none}
-    .muted{opacity:.82;font-size:13px;line-height:1.6}
+    body{margin:0;min-height:100vh}
+    .wrap{max-width:980px;margin:auto;padding:18px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#fff;font-weight:900}
+    .btn{cursor:pointer;border:1px solid var(--border);background:var(--btn);color:var(--text);padding:10px 12px;border-radius:12px;font-weight:900;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+    .primary{background:linear-gradient(45deg,var(--accent),var(--accent2));border:none;color:#fff}
+    .card{margin-top:14px;border:1px solid var(--border);background:var(--card);border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+    .muted{opacity:.82;font-size:13px;line-height:1.7}
+    label{display:block;font-size:12px;opacity:.85;margin:10px 0 6px}
+    input,select,textarea{width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--border);background:var(--input);color:var(--text);outline:none}
+    textarea{min-height:90px;resize:vertical}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:700px){.grid{grid-template-columns:1fr}}
+    .tag{display:inline-flex;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;background:rgba(0,0,0,.12);font-size:12px;margin:6px 6px 0 0}
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <div class="row">
-      <div class="row" style="justify-content:flex-start">
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
         <div class="logo">MF</div>
         <div>
-          <div style="font-size:18px;font-weight:900">الدفع</div>
+          <div style="font-weight:900;font-size:18px">الدفع</div>
           <div class="muted">Vodafone Cash / InstaPay على: <b>01210575530</b></div>
         </div>
       </div>
-      <div class="row">
-        <a href="student.html">رجوع</a>
-        <a href="https://wa.me/201210575530" target="_blank" rel="noreferrer">واتساب الدعم</a>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" href="student.html">رجوع</a>
+        <a class="btn" href="https://wa.me/201210575530" target="_blank" rel="noreferrer">واتساب الدعم</a>
       </div>
     </div>
 
-    <div class="box">
+    <div class="card">
       <div style="font-weight:900">الكورس المختار</div>
-      <div class="muted" id="info" style="margin-top:8px">...</div>
+      <div class="muted" id="courseInfo" style="margin-top:8px">...</div>
+      <div id="courseSch" style="margin-top:8px"></div>
     </div>
 
-    <div class="box">
+    <div class="card">
       <div style="font-weight:900">بيانات الدفع</div>
 
-      <div style="margin-top:10px">
-        <div class="muted">طريقة الدفع</div>
-        <select id="method">
-          <option value="vodafone_cash">Vodafone Cash</option>
-          <option value="instapay">InstaPay</option>
-        </select>
+      <div class="grid">
+        <div>
+          <label>طريقة الدفع</label>
+          <select id="method">
+            <option value="vodafone_cash">Vodafone Cash</option>
+            <option value="instapay">InstaPay</option>
+          </select>
+        </div>
+        <div>
+          <label>إثبات الدفع (رقم العملية / Ref / Screenshot link)</label>
+          <input id="receipt" placeholder="مثال: TXN-12345 أو أي إثبات" />
+        </div>
       </div>
 
-      <div style="margin-top:10px">
-        <div class="muted">رقم العملية / ملاحظة (اكتب أي إثبات)</div>
-        <input id="note" placeholder="مثال: آخر 4 أرقام / رقم عملية / وقت التحويل" />
-      </div>
+      <label>ملاحظة (اختياري)</label>
+      <textarea id="note" placeholder="أي تفاصيل تساعدنا…"></textarea>
 
-      <div class="row" style="margin-top:12px;justify-content:flex-start">
-        <button class="primary" onclick="sendReq()">إرسال طلب الدفع</button>
-        <button onclick="location.href='videos.html'">فتح الفيديوهات</button>
-      </div>
-
-      <div class="muted" style="margin-top:10px">
-        بعد الإرسال الحالة بتكون <b>pending</b> لحد ما الأدمن يوافق.
-      </div>
+      <button class="btn primary" id="btnSend" style="margin-top:12px;width:100%">إرسال طلب الدفع</button>
+      <div class="muted" id="msg" style="margin-top:10px"></div>
     </div>
   </div>
 
-<script type="module">
-  import { supabase } from "./supabase-client.js";
+  <script type="module">
+    import { supabase } from "./supabase-client.js";
 
-  const me = JSON.parse(localStorage.getItem("mf_user") || "null");
-  const c = JSON.parse(localStorage.getItem("mf_selected_course") || "null");
-  if(!me) location.href="login.html";
-  if(!c) location.href="student.html";
+    const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+    if(!me) location.href = "login.html";
 
-  document.getElementById("info").innerHTML =
-    `<b>${esc(c.title)}</b><br>${esc(c.subject)} — ${esc(c.teacher_name)} — السعر: <b>${esc(c.price)}</b>`;
+    const course = JSON.parse(localStorage.getItem("mf_selected_course") || "null");
+    if(!course){
+      document.getElementById("courseInfo").textContent = "مفيش كورس مختار. ارجع اختار كورس من صفحة الطالب.";
+      document.getElementById("btnSend").disabled = true;
+    }else{
+      const supject = course.supject ?? course.subject ?? "";
+      document.getElementById("courseInfo").innerHTML =
+        `<b>${escapeHtml(course.title)}</b><br/>المادة: <b>${escapeHtml(supject)}</b> • المدرس: <b>${escapeHtml(course.teacher_name)}</b> • السعر: <b>${escapeHtml(course.price)}</b> جنيه`;
 
-  window.sendReq = async function(){
-    const method = document.getElementById("method").value;
-    const receipt_note = document.getElementById("note").value.trim();
+      // schedules
+      const { data: sch } = await supabase
+        .from("schedules")
+        .select("day_of_week,start_time,end_time")
+        .eq("course_id", course.id)
+        .order("id", { ascending:false });
 
-    const { error } = await supabase
-      .from("payments")
-      .insert([{ user_id: me.id, course_id: c.id, method, receipt_note, status:"pending" }]);
+      const box = document.getElementById("courseSch");
+      if(!sch || sch.length===0){
+        box.innerHTML = `<div class="muted">مواعيد الكورس لسه مش متسجلة.</div>`;
+      }else{
+        box.innerHTML = sch.map(s=>`<span class="tag">${escapeHtml(s.day_of_week)} • ${escapeHtml(s.start_time)} - ${escapeHtml(s.end_time)}</span>`).join("");
+      }
+    }
 
-    if(error){ alert(error.message); return; }
+    function escapeHtml(s){ return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
 
-    alert("تم إرسال طلب الدفع ✅\nاستنى موافقة الأدمن وبعدها افتح صفحة الفيديوهات.");
-    location.href="student.html";
-  }
+    document.getElementById("btnSend").onclick = async ()=>{
+      const msg = document.getElementById("msg");
+      msg.textContent = "";
 
-  function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
-</script>
+      if(!course){ msg.textContent = "ارجع اختار كورس الأول."; return; }
+
+      const method = document.getElementById("method").value;
+      const receipt = document.getElementById("receipt").value.trim();
+      const note = document.getElementById("note").value.trim() || null;
+
+      if(!receipt){
+        msg.textContent = "اكتب إثبات الدفع (رقم العملية/Ref/لينك).";
+        return;
+      }
+
+      const payload = {
+        user_id: me.id,
+        course_id: course.id,
+        method,
+        receipt,
+        note,
+        status: "pending"
+      };
+
+      const { error } = await supabase.from("payments").insert([payload]);
+      if(error){
+        msg.textContent = "خطأ: " + error.message;
+        return;
+      }
+
+      msg.textContent = "تم إرسال طلب الدفع ✅ هيتراجع من الإدارة قريبًا.";
+      // افتح واتساب لو احتاج
+      setTimeout(()=> window.open("https://wa.me/201210575530","_blank"), 700);
+    };
+  </script>
 </body>
 </html>
