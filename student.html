@@ -1,205 +1,153 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Make Future | Student</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make Future | Student</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./theme.css" />
+  <script src="./theme.js" defer></script>
 
-<style>
-:root{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --accent:#7c3aed;
-  --accent2:#06b6d4;
-  --text:#f1f5f9;
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:'Cairo',sans-serif;
-  background:linear-gradient(135deg,#0f172a,#111827);
-  color:var(--text);
-  min-height:100vh;
-}
-
-/* Navbar */
-.nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:15px 20px;
-  background:rgba(0,0,0,.4);
-  backdrop-filter:blur(10px);
-  position:sticky;
-  top:0;
-  z-index:10;
-}
-
-.logo{
-  font-weight:900;
-  font-size:20px;
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.nav .actions{
-  display:flex; gap:10px; flex-wrap:wrap;
-}
-.nav button{
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
-  padding:8px 14px;
-  border-radius:12px;
-  color:white;
-  font-weight:800;
-  cursor:pointer;
-  transition:.25s;
-}
-.nav button:hover{
-  background:rgba(255,255,255,.14);
-  transform:translateY(-1px);
-}
-.nav button.primary{
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  border:none;
-}
-
-/* Hero */
-.hero{
-  text-align:center;
-  padding:34px 20px 16px;
-}
-.hero h1{font-size:26px;margin:0}
-.hero p{opacity:.7;margin-top:8px}
-
-/* Grid */
-.container{
-  padding:20px;
-  max-width:1100px;
-  margin:auto;
-}
-
-.grid{
-  display:grid;
-  gap:15px;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-}
-
-/* Card */
-.card{
-  background:var(--card);
-  padding:20px;
-  border-radius:18px;
-  transition:.3s;
-  border:1px solid rgba(255,255,255,.05);
-}
-.card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
-}
-.card h3{margin:0 0 10px}
-.card .meta{opacity:.8;font-size:13px;line-height:1.7}
-.card button{
-  margin-top:12px;
-  width:100%;
-  background:linear-gradient(45deg,var(--accent),var(--accent2));
-  border:none;
-  padding:10px;
-  border-radius:12px;
-  color:white;
-  font-weight:900;
-  cursor:pointer;
-}
-@media(max-width:500px){
-  .hero h1{font-size:22px}
-}
-</style>
+  <style>
+    body{margin:0;min-height:100vh}
+    .nav{position:sticky;top:0;z-index:5;backdrop-filter:blur(10px);
+      background:rgba(0,0,0,.18);border-bottom:1px solid var(--border)}
+    .navin{max-width:1100px;margin:auto;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;color:#fff;font-weight:900}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{cursor:pointer;border:1px solid var(--border);background:var(--btn);color:var(--text);padding:10px 12px;border-radius:12px;font-weight:900}
+    .primary{background:linear-gradient(45deg,var(--accent),var(--accent2));border:none;color:#fff}
+    .container{max-width:1100px;margin:auto;padding:18px}
+    .hero{border:1px solid var(--border);background:var(--card);border-radius:18px;padding:18px;overflow:hidden;position:relative}
+    .hero:before{content:"";position:absolute;inset:-60px;opacity:.35;
+      background:radial-gradient(circle at 30% 20%, var(--accent), transparent 55%),
+                 radial-gradient(circle at 80% 30%, var(--accent2), transparent 55%);}
+    .hero > *{position:relative}
+    h1{margin:0 0 6px;font-size:22px}
+    .muted{opacity:.82;font-size:13px;line-height:1.7}
+    .grid{display:grid;gap:14px;margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+    .card{border:1px solid var(--border);background:var(--card);border-radius:18px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+    .card h3{margin:0 0 8px}
+    .meta{opacity:.85;font-size:13px;line-height:1.8}
+    .sch{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(255,255,255,.12)}
+    .pill{display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .tag{font-size:12px;opacity:.9;border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;background:rgba(0,0,0,.12)}
+  </style>
 </head>
 
 <body>
-
-<div class="nav">
-  <div class="logo">Make Future</div>
-  <div class="actions">
-    <button class="primary" onclick="location.href='payment.html'">الدفع</button>
-    <button onclick="location.href='videos.html'">الفيديوهات</button>
-    <button id="adminBtn" style="display:none" onclick="location.href='admin.html'">لوحة الأدمن</button>
-    <button onclick="logout()">خروج</button>
-  </div>
-</div>
-
-<div class="hero">
-  <h1 id="welcome">...</h1>
-  <p>اختر الكورس المناسب وابدأ رحلتك</p>
-</div>
-
-<div class="container">
-  <div class="grid" id="courses"></div>
-</div>
-
-<script type="module">
-import { supabase } from "./supabase-client.js";
-
-const user = JSON.parse(localStorage.getItem("mf_user") || "null");
-if(!user) location.href="login.html";
-
-document.getElementById("welcome").innerText = "أهلاً " + user.full_name + " — " + user.grade;
-
-if(user.role === "superadmin"){
-  document.getElementById("adminBtn").style.display = "inline-block";
-}
-
-async function loadCourses(){
-  const { data, error } = await supabase
-    .from("courses")
-    .select("*")
-    .eq("grade", user.grade)
-    .eq("is_active", true);
-
-  if(error){ alert(error.message); return; }
-
-  const container = document.getElementById("courses");
-  container.innerHTML="";
-
-  if(!data || data.length===0){
-    container.innerHTML = `<div class="card"><h3>لا يوجد كورسات</h3><div class="meta">لسه مفيش كورسات اتضافت للسنة دي.</div></div>`;
-    return;
-  }
-
-  data.forEach(c=>{
-    const div = document.createElement("div");
-    div.className="card";
-    div.innerHTML=`
-      <h3>${esc(c.title)}</h3>
-      <div class="meta">
-        المادة: <b>${esc(c.subject)}</b><br>
-        المدرس: <b>${esc(c.teacher_name)}</b><br>
-        السعر: <b>${esc(c.price)}</b> جنيه
+  <div class="nav">
+    <div class="navin">
+      <div class="brand">
+        <div class="logo">MF</div>
+        <div>
+          <div style="font-weight:900">Make Future</div>
+          <div class="muted" id="welcomeMini">...</div>
+        </div>
       </div>
-      <button onclick='selectCourse(${JSON.stringify(c)})'>اختيار الكورس</button>
-    `;
-    container.appendChild(div);
-  });
-}
+      <div class="actions">
+        <button class="btn" onclick="location.href='videos.html'">📚 الفيديوهات</button>
+        <button class="btn primary" onclick="location.href='payment.html'">💳 الدفع</button>
+        <button class="btn" id="adminBtn" style="display:none" onclick="location.href='admin.html'">🛠️ لوحة الأدمن</button>
+        <button class="btn" onclick="logout()">خروج</button>
+      </div>
+    </div>
+  </div>
 
-window.selectCourse=function(course){
-  localStorage.setItem("mf_selected_course",JSON.stringify(course));
-  location.href="payment.html";
-}
+  <div class="container">
+    <div class="hero">
+      <h1 id="welcome">...</h1>
+      <div class="muted">اختار الكورس — وشوف مواعيده — وبعدها ادفع وسيب الباقي علينا ✅</div>
+    </div>
 
-window.logout=function(){
-  localStorage.removeItem("mf_user");
-  location.href="login.html";
-}
+    <div class="grid" id="courses"></div>
+  </div>
 
-function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+  <script type="module">
+    import { supabase } from "./supabase-client.js";
 
-loadCourses();
-</script>
+    const me = JSON.parse(localStorage.getItem("mf_user") || "null");
+    if(!me) location.href = "login.html";
 
+    const isAdminUI = String(me.role||"").toLowerCase().includes("admin");
+    if(isAdminUI) document.getElementById("adminBtn").style.display = "inline-flex";
+
+    document.getElementById("welcome").textContent = `أهلاً ${me.full_name} — ${me.grade}`;
+    document.getElementById("welcomeMini").textContent = `${me.grade} • ${me.phone_student || ""}`;
+
+    function esc(s){ return String(s ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+    function subj(row){ return row?.supject ?? row?.subject ?? ""; }
+
+    async function loadCourses(){
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id,grade,supject,title,teacher_name,price,is_active,created_at")
+        .eq("grade", me.grade)
+        .eq("is_active", true)
+        .order("id", { ascending:false });
+
+      if(error){ alert(error.message); return; }
+
+      const box = document.getElementById("courses");
+      box.innerHTML = "";
+
+      if(!data || data.length === 0){
+        box.innerHTML = `<div class="card"><h3>لا يوجد كورسات</h3><div class="meta">لسه مفيش كورسات للسنة دي.</div></div>`;
+        return;
+      }
+
+      for(const c of data){
+        // load schedules for each course
+        const { data: sch, error: schErr } = await supabase
+          .from("schedules")
+          .select("id,day_of_week,start_time,end_time,notes")
+          .eq("course_id", c.id)
+          .order("id", { ascending:false });
+
+        if(schErr){ /* نخليها تعدي */ }
+
+        const div = document.createElement("div");
+        div.className = "card";
+
+        const schHtml = (!sch || sch.length===0)
+          ? `<div class="muted">مواعيد الكورس لسه مش متسجلة.</div>`
+          : `<div class="pill">${sch.map(s=>`<span class="tag">${esc(s.day_of_week)} • ${esc(s.start_time)} - ${esc(s.end_time)}</span>`).join("")}</div>`;
+
+        div.innerHTML = `
+          <h3>${esc(c.title)}</h3>
+          <div class="meta">
+            المادة: <b>${esc(subj(c))}</b><br>
+            المدرس: <b>${esc(c.teacher_name)}</b><br>
+            السعر: <b>${esc(c.price)}</b> جنيه
+          </div>
+
+          <div class="sch">
+            <div style="font-weight:900;margin-bottom:6px">المواعيد</div>
+            ${schHtml}
+          </div>
+
+          <button class="btn primary" style="width:100%;margin-top:12px" data-pick="${c.id}">اختيار الكورس والدفع</button>
+        `;
+
+        div.querySelector("[data-pick]").onclick = ()=>{
+          localStorage.setItem("mf_selected_course", JSON.stringify(c));
+          location.href = "payment.html";
+        };
+
+        box.appendChild(div);
+      }
+    }
+
+    window.logout = async function(){
+      await supabase.auth.signOut();
+      localStorage.removeItem("mf_user");
+      localStorage.removeItem("mf_selected_course");
+      location.href = "login.html";
+    };
+
+    loadCourses();
+  </script>
 </body>
 </html>
