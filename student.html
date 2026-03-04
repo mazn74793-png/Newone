@@ -1,82 +1,205 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Make Future | Student</title>
-  <style>
-    :root{color-scheme:dark}
-    body{margin:0;font-family:system-ui;background:#0b1020;color:#e8ecff;min-height:100vh;padding:18px}
-    .card{max-width:820px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px}
-    button,a{cursor:pointer;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#fff;padding:10px 14px;border-radius:12px;text-decoration:none;font-weight:800}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .muted{opacity:.82;font-size:13px;line-height:1.6}
-    pre{background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);padding:12px;border-radius:12px;overflow:auto}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Make Future | Student</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --accent:#7c3aed;
+  --accent2:#06b6d4;
+  --text:#f1f5f9;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Cairo',sans-serif;
+  background:linear-gradient(135deg,#0f172a,#111827);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* Navbar */
+.nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:rgba(0,0,0,.4);
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.logo{
+  font-weight:900;
+  font-size:20px;
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.nav .actions{
+  display:flex; gap:10px; flex-wrap:wrap;
+}
+.nav button{
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+  padding:8px 14px;
+  border-radius:12px;
+  color:white;
+  font-weight:800;
+  cursor:pointer;
+  transition:.25s;
+}
+.nav button:hover{
+  background:rgba(255,255,255,.14);
+  transform:translateY(-1px);
+}
+.nav button.primary{
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  border:none;
+}
+
+/* Hero */
+.hero{
+  text-align:center;
+  padding:34px 20px 16px;
+}
+.hero h1{font-size:26px;margin:0}
+.hero p{opacity:.7;margin-top:8px}
+
+/* Grid */
+.container{
+  padding:20px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.grid{
+  display:grid;
+  gap:15px;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+}
+
+/* Card */
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:18px;
+  transition:.3s;
+  border:1px solid rgba(255,255,255,.05);
+}
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+.card h3{margin:0 0 10px}
+.card .meta{opacity:.8;font-size:13px;line-height:1.7}
+.card button{
+  margin-top:12px;
+  width:100%;
+  background:linear-gradient(45deg,var(--accent),var(--accent2));
+  border:none;
+  padding:10px;
+  border-radius:12px;
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
+@media(max-width:500px){
+  .hero h1{font-size:22px}
+}
+</style>
 </head>
+
 <body>
-  <div class="card">
-    <div class="row" style="justify-content:space-between">
-      <div>
-        <div style="font-weight:900;font-size:18px">لوحة الطالب</div>
-        <div class="muted">دي صفحة اختبار للتأكد إن الـ Login شغال.</div>
-      </div>
-      <div class="row">
-        <a href="index.html">الرئيسية</a>
-        <a href="login.html">تسجيل/دخول</a>
-        <button id="btnLogout">خروج</button>
-      </div>
-    </div>
 
-    <div style="margin-top:12px" class="muted" id="status">جارٍ التحميل…</div>
-    <pre id="out" style="margin-top:12px"></pre>
+<div class="nav">
+  <div class="logo">Make Future</div>
+  <div class="actions">
+    <button class="primary" onclick="location.href='payment.html'">الدفع</button>
+    <button onclick="location.href='videos.html'">الفيديوهات</button>
+    <button id="adminBtn" style="display:none" onclick="location.href='admin.html'">لوحة الأدمن</button>
+    <button onclick="logout()">خروج</button>
   </div>
+</div>
 
-  <script type="module">
-    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+<div class="hero">
+  <h1 id="welcome">...</h1>
+  <p>اختر الكورس المناسب وابدأ رحلتك</p>
+</div>
 
-    const supabase = createClient(
-      "https://anlstahxxpbbfnwrwulu.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFubHN0YWh4eHBiYmZud3J3dWx1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NDQzMTIsImV4cCI6MjA4ODEyMDMxMn0.4RQxQ4AZZCVCswTRdJoZ7Jz9qNwQq0fPs7vitnMJ3A4"
-    );
+<div class="container">
+  <div class="grid" id="courses"></div>
+</div>
 
-    const status = document.getElementById("status");
-    const out = document.getElementById("out");
+<script type="module">
+import { supabase } from "./supabase-client.js";
 
-    document.getElementById("btnLogout").onclick = async () => {
-      await supabase.auth.signOut();
-      location.href = "login.html";
-    };
+const user = JSON.parse(localStorage.getItem("mf_user") || "null");
+if(!user) location.href="login.html";
 
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
+document.getElementById("welcome").innerText = "أهلاً " + user.full_name + " — " + user.grade;
 
-      if (!session) {
-        status.textContent = "مش مسجل دخول — هرّجعك لصفحة login.";
-        setTimeout(() => location.href = "login.html", 800);
-        return;
-      }
+if(user.role === "superadmin"){
+  document.getElementById("adminBtn").style.display = "inline-block";
+}
 
-      status.textContent = "مسجل دخول ✅ هجيب بياناتك من profiles…";
+async function loadCourses(){
+  const { data, error } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("grade", user.grade)
+    .eq("is_active", true);
 
-      const uid = session.user.id;
+  if(error){ alert(error.message); return; }
 
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", uid)
-        .single();
+  const container = document.getElementById("courses");
+  container.innerHTML="";
 
-      if (error) {
-        status.textContent = "في Error في قراءة profiles: " + error.message;
-        out.textContent = JSON.stringify({ uid }, null, 2);
-        return;
-      }
+  if(!data || data.length===0){
+    container.innerHTML = `<div class="card"><h3>لا يوجد كورسات</h3><div class="meta">لسه مفيش كورسات اتضافت للسنة دي.</div></div>`;
+    return;
+  }
 
-      status.textContent = "تمام ✅ دي بياناتك:";
-      out.textContent = JSON.stringify(profile, null, 2);
-    })();
-  </script>
+  data.forEach(c=>{
+    const div = document.createElement("div");
+    div.className="card";
+    div.innerHTML=`
+      <h3>${esc(c.title)}</h3>
+      <div class="meta">
+        المادة: <b>${esc(c.subject)}</b><br>
+        المدرس: <b>${esc(c.teacher_name)}</b><br>
+        السعر: <b>${esc(c.price)}</b> جنيه
+      </div>
+      <button onclick='selectCourse(${JSON.stringify(c)})'>اختيار الكورس</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+window.selectCourse=function(course){
+  localStorage.setItem("mf_selected_course",JSON.stringify(course));
+  location.href="payment.html";
+}
+
+window.logout=function(){
+  localStorage.removeItem("mf_user");
+  location.href="login.html";
+}
+
+function esc(s){ return String(s||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+
+loadCourses();
+</script>
+
 </body>
 </html>
