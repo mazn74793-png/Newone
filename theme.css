@@ -1,0 +1,84 @@
+/* theme.css */
+:root{
+  --bg: #0b1020;
+  --card: rgba(255,255,255,.06);
+  --border: rgba(255,255,255,.12);
+  --text: #e8ecff;
+  --muted: rgba(232,236,255,.75);
+  --btn: rgba(255,255,255,.08);
+  --btn-border: rgba(255,255,255,.16);
+  --accent: #8be9fd;
+}
+
+:root[data-theme="light"]{
+  --bg: #f6f7fb;
+  --card: rgba(0,0,0,.04);
+  --border: rgba(0,0,0,.10);
+  --text: #0f172a;
+  --muted: rgba(15,23,42,.72);
+  --btn: rgba(0,0,0,.06);
+  --btn-border: rgba(0,0,0,.12);
+  --accent: #2563eb;
+}
+
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* شكل عام للكروت */
+.card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+/* زرار عام */
+.btn{
+  cursor:pointer;
+  border:1px solid var(--btn-border);
+  background: var(--btn);
+  color: var(--text);
+  padding:10px 14px;
+  border-radius: 12px;
+  text-decoration:none;
+  font-weight: 800;
+}
+
+/* زرار التبديل */
+.theme-toggle{
+  position: fixed;
+  top: 12px;
+  left: 12px; /* لو عايزه يمين قولّي */
+  z-index: 9999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  backdrop-filter: blur(10px);
+}
+
+.theme-toggle .pill{
+  display:flex;
+  gap:8px;
+  padding:8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background: var(--card);
+}
+
+.theme-toggle button{
+  border:1px solid var(--btn-border);
+  background: var(--btn);
+  color: var(--text);
+  padding:8px 10px;
+  border-radius:999px;
+  font-weight:800;
+}
+.theme-toggle button.active{
+  outline: 2px solid var(--accent);
+  border-color: transparent;
+}
